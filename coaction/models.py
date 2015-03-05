@@ -9,4 +9,4 @@ class User(db.Model):
 
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(255), nullable=False)
+    title = db.Column(db.String(255), nullable=False)
