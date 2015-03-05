@@ -29,3 +29,6 @@ webtest
 
 # Management script
 Flask-Script
+
+# Marshmallow
+marshmallow==1.2.2
