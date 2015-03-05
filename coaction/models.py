@@ -11,3 +11,11 @@ class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(255), nullable=False)
     status = db.Column
+
+class TaskSchema(Schema):
+    title = fields.Str(required=True, validate=must_not_be_blank)
+
+    class Meta:
+        fields = ("id", "title")
+
+
