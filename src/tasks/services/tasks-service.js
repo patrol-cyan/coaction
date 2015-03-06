@@ -4,15 +4,8 @@ app.factory('tasksService', ['$http', '$log', function($http, $log) {
 
   return {
     list: function () {
-      // return [{
-      //   title: "getsss stuff done",
-      //   description: "as fast as you can"
-      // },{
-      //   title: "get more stuff done",
-      //   description: "faster"
-      // }];
       return $http.get('/api/tasks').then(function(result) {
-        return result.data;
+        return result.data.tasks;
       }).catch(function(err) {
         $log.log(err);
         // throw err;
@@ -21,3 +14,16 @@ app.factory('tasksService', ['$http', '$log', function($http, $log) {
 
   };
 }]);
+
+
+self.addShare = function () {
+    var share = self.newShare;
+    self.newShare = Share();
+
+    sharesService.addShare(share).then(function (data) {
+      self.shares = self.shares.filter(function (existingShare) {
+        return existingShare._id !== share._id;
+      });
+      refreshShares();
+    });
+  };

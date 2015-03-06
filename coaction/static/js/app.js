@@ -13,6 +13,43 @@ app.config(['$routeProvider', function ($routeProvider) {
 
 app.config(['$routeProvider', function($routeProvider) {
   var routeDefinition = {
+    templateUrl: '/static/tasks/new-task.html',
+    controller: 'newTaskCtrl',
+    controllerAs: 'vm',
+    // resolve: {
+    //   tasks: ['tasksService', function (tasksService) {
+    //     return tasksService.addTask();
+    //   }],
+    // }
+  };
+
+  $routeProvider.when('/tasks/new', routeDefinition)
+}])
+.controller('newTaskCtrl', ['tasksService', function (tasksService) {
+  var self = this;
+
+  self.task = {
+    title: '',
+    description: '',
+  }
+}]);
+
+
+
+self.addShare = function () {
+    var share = self.newShare;
+    self.newShare = Share();
+
+    sharesService.addShare(share).then(function (data) {
+      self.shares = self.shares.filter(function (existingShare) {
+        return existingShare._id !== share._id;
+      });
+      refreshShares();
+    });
+  };
+
+app.config(['$routeProvider', function($routeProvider) {
+  var routeDefinition = {
     templateUrl: '/static/tasks/tasks.html',
     controller: 'TasksCtrl',
     controllerAs: 'vm',
@@ -42,15 +79,8 @@ app.factory('tasksService', ['$http', '$log', function($http, $log) {
 
   return {
     list: function () {
-      // return [{
-      //   title: "getsss stuff done",
-      //   description: "as fast as you can"
-      // },{
-      //   title: "get more stuff done",
-      //   description: "faster"
-      // }];
       return $http.get('/api/tasks').then(function(result) {
-        return result.data;
+        return result.data.tasks;
       }).catch(function(err) {
         $log.log(err);
         // throw err;
@@ -59,5 +89,18 @@ app.factory('tasksService', ['$http', '$log', function($http, $log) {
 
   };
 }]);
+
+
+self.addShare = function () {
+    var share = self.newShare;
+    self.newShare = Share();
+
+    sharesService.addShare(share).then(function (data) {
+      self.shares = self.shares.filter(function (existingShare) {
+        return existingShare._id !== share._id;
+      });
+      refreshShares();
+    });
+  };
 
 //# sourceMappingURL=app.js.map
