@@ -141,3 +141,27 @@ python3 manage.py db upgrade
 python3 manage.py fake_tasks
 ```
 will put 3 really boring tasks in the database.
+
+## Locating/Navigating through the API
+
+| HTTP Method | URL                                       | Action        |
+|-------------------------------------------------------------------------|
+| POST        | "/api/tasks"                             |  Add Task     |
+|-------------------------------------------------------------------------|
+| PUT         | "/api/tasks/<int:id>/"                   | Update Task   |
+|-------------------------------------------------------------------------|
+| DELETE      | "/api/tasks/<int:id>"           | Delete Task   |
+|-------------------------------------------------------------------------|
+| GET         | "/api/tasks/<int:id>/comments"           | Get Comment   |
+|-------------------------------------------------------------------------|
+| POST        | "/api/tasks/<int:id>/comments"           | Add Comment   |
+|-------------------------------------------------------------------------|
+| DELETE      | "/api/tasks/<int:id>/comments"           | Delete Comment|
+|-------------------------------------------------------------------------|
+| GET, POST   | "/api/login"                             | Login User    |
+|-------------------------------------------------------------------------|
+| GET         | "/api/logout"                            | Logout User   |
+|
+
+
+
