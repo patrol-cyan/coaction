@@ -152,8 +152,8 @@ will put 3 really boring tasks in the database.
 | GET         | "/api/tasks/<int:id>/comments"           | Get Comment   |
 | POST        | "/api/tasks/<int:id>/comments"           | Add Comment   |
 | DELETE      | "/api/tasks/<int:id>/comments"           | Delete Comment|
-| GET, POST   | "/api/login"                             | Login User    |
-| GET         | "/api/logout"                            | Logout User   |
+| POST   | "/api/login"                             | Login User    |
+| POST        | "/api/logout"                            | Logout User   |
 
 
 
