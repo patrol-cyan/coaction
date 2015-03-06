@@ -11,8 +11,46 @@ app.config(['$routeProvider', function ($routeProvider) {
   });
 }]);
 
+app.config(['$routeProvider', function($routeProvider) {
+  var routeDefinition = {
+    templateUrl: 'static/tasks/tasks.html',
+    controller: 'TasksCtrl',
+    controllerAs: 'vm',
+    resolve: {
+      tasks: ['tasksService', function (tasksService) {
+        return tasksService.list();
+      }],
+    }
+  };
+
+  $routeProvider.when('/', routeDefinition)
+    .when('/tasks', routeDefinition);
+}])
+.controller('TasksCtrl', ['tasks', function (tasks) {
+  var self = this;
+
+  self.tasks = tasks;
+}]);
+
 app.controller('Error404Ctrl', ['$location', function ($location) {
   this.message = 'Could not find: ' + $location.url();
 }]);
+
+app.factory('tasksService', function() {
+
+  return {
+    list: function () {
+      return [{
+        title: "getsss stuff done",
+        description: "as fast as you can"
+      },{
+        title: "get more stuff done",
+        description: "faster"
+      }];
+      // return ajaxHelper.call($http.get('/api/tasks'));
+    },
+
+  };
+});
 
 //# sourceMappingURL=app.js.map
