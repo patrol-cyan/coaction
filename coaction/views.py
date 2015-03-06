@@ -53,16 +53,16 @@ def update_task(id):
     errors = task_schema.validate(input_data)
     if errors:
         return jsonify(errors), 400
-    task = Task(title=task_title)
-    db.session.add(task)
-    db.session.commit()
-    result = task_schema.dump(Task.query.get(task.id))
-    return jsonify({"message": "Updated current task.",
-                    "updatetask": result.data})
+        task = Task(title=task_title)
+        db.session.add(task)
         db.session.commit()
-        return jsonify(todo.to_dict())
+        result = task_schema.dump(Task.query.get(task.id))
+        return jsonify({"message": "Updated current task.",
+                        "updatetask": result.data})
+        db.session.commit()
+        return jsonify(task.to_dict())
     else:
-        resp = jsonify(form.errors)
+        resp = jsonify(errors)
         resp.status_code = 400
         return resp
 
@@ -83,9 +83,11 @@ def get_comments(id):
 def add_comments(id):
     pass
 
-@coaction.route("/api/tasks/<int:id>/comments", methods=["DELETE"]
+@coaction.route("/api/tasks/<int:id>/comments", methods=["DELETE"])
 def delete_comments(id):
     pass
+
+
 
     
 
