@@ -1,0 +1,15 @@
+<div class="tasks">
+
+<h1>Testing</h1>
+  <a href="#/tasks/new">Add a task</a>
+  <ul>
+    <li ng-repeat="task in vm.tasks">
+      <h2>{{task.title}}</h2>
+      <p>
+        {{task.description}}
+      </p>
+
+    </li>
+  </ul>
+
+</div>
