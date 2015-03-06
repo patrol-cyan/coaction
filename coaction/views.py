@@ -60,11 +60,8 @@ def update_task(id):
     return jsonify({"message": "Updated current task.",
                     "updatetask": result.data})
         db.session.commit()
-        return jsonify(todo.to_dict())
-    else:
-        resp = jsonify(form.errors)
-        resp.status_code = 400
-        return resp
+        return jsonify(tasks.to_dict())
+
 
 
 @coaction.route("/api/tasks/<int:id>", methods=["DELETE"])
@@ -87,6 +84,38 @@ def add_comments(id):
 def delete_comments(id):
     pass
 
+@coaction.route("/api/login", methods=["GET", "POST"])
+def login():
+    print db
+    #form = LoginForm()
+    #if form.validate_on_submit():
+        user = User.query.get(form.email.data)
+        if user:
+            if bcrypt.check_password_hash(user.password, form.password.data):????????
+                user.authenticated = True
+                db.session.add(user)
+                db.session.commit()
+                login_user(user, remember=True)
+                return redirect(url_for("Main.page"))?????????????
+    return render_template("login.html", form=form)
+
+@coaction.route("/api/logout", methods=["GET"])
+@login_required
+def logout():
+    """Logout the current user."""
+    user = current_user
+    user.authenticated = False
+    db.session.add(user)
+    db.session.commit()
+    logout_user()
+    return json("logout successful")
+
+@login_manager.user_loader
+def user_loader(user_id):
+    """Given *user_id*, return the associated User object.
+    :param unicode user_id: user_id (email) user to retrieve
+    """
+    return User.query.get(user_id)
     
 
 
