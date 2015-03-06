@@ -20,9 +20,9 @@ def index():
 def api():
     return ""
 
-@coaction.route("/api/todos", methods=["GET"])
-def todos():
-    todos = [todo.to_dict() for todo in Todo.query.all()]
+@coaction.route("/api/tasks", methods=["GET"])
+def view_tasks():
+    tasks = [todo.to_dict() for todo in Todo.query.all()]
     return jsonify(todos=todos)
 
 @coaction.route("/api/tasks", methods=["POST"])
@@ -43,10 +43,10 @@ def add_task():
                     "task": result.data})
 
 
-@coaction.route("/api/todos/<int:id>", methods=["PUT"])
+@coaction.route("/api/tasks/<int:id>", methods=["PUT"])
 def update_todo(id):
-    todo = Todo.query.get_or_404(id)
-    todo_data = request.get_json()
+    task = Task.query.get_or_404(id)
+    task_data = request.get_json()
     form = TodoForm(data=todo_data)
     if form.validate():
         form.populate_obj(todo)
@@ -57,9 +57,9 @@ def update_todo(id):
         resp.status_code = 400
         return resp
 
-@coaction.route("/api/todos/<int:id>", methods=["DELETE"])
+@coaction.route("/api/tasks/<int:id>", methods=["DELETE"])
 def delete_todo(id):
-    todo = Todo.query.get_or_404(id)
+    task = Task.query.get_or_404(id)
     db.session.delete(todo)
     db.session.commit()
     return jsonify({"deleted": "true"})

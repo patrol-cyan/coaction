@@ -12,6 +12,10 @@ class Task(db.Model):
     title = db.Column(db.String(255), nullable=False)
     status = db.Column
 
+def must_not_be_blank(data):
+    if not data:
+        raise ValidationError('Data not provided.')
+
 class TaskSchema(Schema):
     title = fields.Str(required=True, validate=must_not_be_blank)
 
