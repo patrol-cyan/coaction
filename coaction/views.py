@@ -1,8 +1,8 @@
 from flask import Blueprint, flash, jsonify, request
-from .models import Task, TaskSchema
-from .forms import TodoForm
-from .extensions import db
+from .models import Task, TaskSchema, User
+from .extensions import db, login_manager
 from marshmallow import Schema, fields, ValidationError
+from flask.ext.login import login_required, login_user
 coaction = Blueprint("coaction", __name__, static_folder="./static")
 task_schema = TaskSchema()
 
@@ -88,22 +88,22 @@ def delete_comments(id):
     pass
 
 
-@coaction.route("/api/login", methods=["GET", "POST"])
+@coaction.route("/api/login", methods=["POST"])
 def login():
-    print db
+    #print db
     #form = LoginForm()
     #if form.validate_on_submit():
         user = User.query.get(form.email.data)
         if user:
-            if bcrypt.check_password_hash(user.password, form.password.data):????????
+            if bcrypt.check_password_hash(user.password, form.password.data):
                 user.authenticated = True
                 db.session.add(user)
                 db.session.commit()
                 login_user(user, remember=True)
-                return redirect(url_for("Main.page"))?????????????
-    return render_template("login.html", form=form)
+                pass
 
-@coaction.route("/api/logout", methods=["GET"])
+
+@coaction.route("/api/logout", methods=["POST"])
 @login_required
 def logout():
     """Logout the current user."""
@@ -112,7 +112,7 @@ def logout():
     db.session.add(user)
     db.session.commit()
     logout_user()
-    return json("logout successful")
+    return jsonify({"message": "logout successful."})
 
 @login_manager.user_loader
 def user_loader(user_id):
