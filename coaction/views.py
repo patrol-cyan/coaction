@@ -53,15 +53,18 @@ def update_task(id):
     errors = task_schema.validate(input_data)
     if errors:
         return jsonify(errors), 400
-    task = Task(title=task_title)
-    db.session.add(task)
-    db.session.commit()
-    result = task_schema.dump(Task.query.get(task.id))
-    return jsonify({"message": "Updated current task.",
-                    "updatetask": result.data})
+        task = Task(title=task_title)
+        db.session.add(task)
         db.session.commit()
-        return jsonify(tasks.to_dict())
-
+        result = task_schema.dump(Task.query.get(task.id))
+        return jsonify({"message": "Updated current task.",
+                        "updatetask": result.data})
+        db.session.commit()
+        return jsonify(task.to_dict())
+    else:
+        resp = jsonify(errors)
+        resp.status_code = 400
+        return resp
 
 
 @coaction.route("/api/tasks/<int:id>", methods=["DELETE"])
@@ -80,9 +83,10 @@ def get_comments(id):
 def add_comments(id):
     pass
 
-@coaction.route("/api/tasks/<int:id>/comments", methods=["DELETE"]
+@coaction.route("/api/tasks/<int:id>/comments", methods=["DELETE"])
 def delete_comments(id):
     pass
+
 
 @coaction.route("/api/login", methods=["GET", "POST"])
 def login():
@@ -116,6 +120,9 @@ def user_loader(user_id):
     :param unicode user_id: user_id (email) user to retrieve
     """
     return User.query.get(user_id)
+
+
+
     
 
 

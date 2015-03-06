@@ -17,7 +17,17 @@ class Task(db.Model):
     due_date = db.Column(db.DateTime)
     owner = db.Column(db.Integer)
     assignee = db.Column(db.Integer)
+    description = db.Column(db.String(255))
 
+    def to_dict(self):
+        resp = {"id": self.id,
+                "title": self.title,
+                "completion_status": self.completion_status,
+                "started_status": self.started_status,
+                "due_date": self.due_date,
+                "owner": self.owner,
+                "assignee": self.assignee}
+        return resp
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
