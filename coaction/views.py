@@ -22,8 +22,8 @@ def api():
 
 @coaction.route("/api/tasks", methods=["GET"])
 def view_tasks():
-    tasks = [todo.to_dict() for todo in Todo.query.all()]
-    return jsonify(todos=todos)
+    tasks = [task.to_dict() for task in Task.query.all()]
+    return jsonify(tasks=tasks)
 
 @coaction.route("/api/tasks", methods=["POST"])
 def add_task():
@@ -43,13 +43,22 @@ def add_task():
                     "task": result.data})
 
 
-@coaction.route("/api/tasks/<int:id>", methods=["PUT"])
-def update_todo(id):
-    task = Task.query.get_or_404(id)
+@coaction.route("/api/tasks/<int:id>/", methods=["PUT"])
+def update_task(id):
+    if not request.get_json():
+        return jsonify({'message': 'No input data provided'}), 400
+    task_title = request.get_json().get('title')
     task_data = request.get_json()
-    form = TodoForm(data=todo_data)
-    if form.validate():
-        form.populate_obj(todo)
+    input_data = dict(title=task_title)
+    errors = task_schema.validate(input_data)
+    if errors:
+        return jsonify(errors), 400
+    task = Task(title=task_title)
+    db.session.add(task)
+    db.session.commit()
+    result = task_schema.dump(Task.query.get(task.id))
+    return jsonify({"message": "Updated current task.",
+                    "updatetask": result.data})
         db.session.commit()
         return jsonify(todo.to_dict())
     else:
@@ -58,10 +67,26 @@ def update_todo(id):
         return resp
 
 @coaction.route("/api/tasks/<int:id>", methods=["DELETE"])
-def delete_todo(id):
+def delete_task(id):
     task = Task.query.get_or_404(id)
     db.session.delete(todo)
     db.session.commit()
     return jsonify({"deleted": "true"})
+
+@coaction.route("/api/tasks/<int:id>/comments", methods=["GET"])
+def get_comments(id):
+
+
+@coaction.route("/api/tasks/<int:id>/comments", methods=["POST"])
+def add_comments(id):
+
+
+@coaction.route("/api/tasks/<int:id>/comments", methods=["DELETE"]
+def delete_comments(id):
+
+    
+
+
+
 
 
