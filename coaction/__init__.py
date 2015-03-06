@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 
 from . import models
-from .extensions import db, migrate, config
+from .extensions import db, migrate, config, bcrypt
 from .views import coaction
 
 
@@ -18,5 +18,6 @@ def create_app():
     config.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db)
+    bcrypt.init_app(app)
 
     return app
