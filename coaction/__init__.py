@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 
 from . import models
-from .extensions import db, migrate, config, bcrypt
+from .extensions import db, migrate, config, bcrypt, login_manager
 from .views import coaction
 
 
@@ -19,5 +19,6 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     bcrypt.init_app(app)
+    login_manager.init_app(app)
 
     return app

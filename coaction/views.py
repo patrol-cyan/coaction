@@ -1,7 +1,8 @@
 from flask import Blueprint, flash, jsonify, request
 from .models import Task, TaskSchema, User
-from .extensions import db
+from .extensions import db, login_manager
 from marshmallow import Schema, fields, ValidationError
+from flask.ext.login import login_required, login_user
 coaction = Blueprint("coaction", __name__, static_folder="./static")
 task_schema = TaskSchema()
 
@@ -86,7 +87,6 @@ def add_comments(id):
 def delete_comments(id):
     pass
 
-@coasction.route("api/tasks/<int:id">/)
 
 @coaction.route("/api/login", methods=["POST"])
 def login():
