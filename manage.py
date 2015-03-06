@@ -6,6 +6,7 @@ from flask.ext.migrate import MigrateCommand
 from flask.ext.script.commands import ShowUrls, Clean
 
 from coaction import create_app, db
+from coaction.models import Task
 
 
 app = create_app()
@@ -31,6 +32,16 @@ def createdb():
     Migrations are preferred."""
     db.create_all()
 
+@manager.command
+def fake_tasks():
+    task1 = Task(title="Write Docs")
+    task2 = Task(title="Debug API")
+    task3 = Task(title="Buy groceries")
+
+    db.session.add(task1)
+    db.session.add(task2)
+    db.session.add(task3)
+    db.session.commit()
 
 if __name__ == '__main__':
     manager.run()
