@@ -22,8 +22,8 @@ def api():
 
 @coaction.route("/api/tasks", methods=["GET"])
 def view_tasks():
-    tasks = [todo.to_dict() for todo in Todo.query.all()]
-    return jsonify(todos=todos)
+    tasks = [task.to_dict() for task in Task.query.all()]
+    return jsonify(todos=tasks)
 
 @coaction.route("/api/tasks", methods=["POST"])
 def add_task():
@@ -47,20 +47,20 @@ def add_task():
 def update_todo(id):
     task = Task.query.get_or_404(id)
     task_data = request.get_json()
-    form = TodoForm(data=todo_data)
-    if form.validate():
-        form.populate_obj(todo)
-        db.session.commit()
-        return jsonify(todo.to_dict())
-    else:
-        resp = jsonify(form.errors)
-        resp.status_code = 400
-        return resp
+    # Validate task update
+    #if form.validate():
+    #    form.populate_obj(task)
+    #    db.session.commit()
+    #    return jsonify(task.to_dict())
+    #else:
+    #    resp = jsonify(form.errors)
+    #    resp.status_code = 400
+    #    return resp
 
 @coaction.route("/api/tasks/<int:id>", methods=["DELETE"])
 def delete_todo(id):
     task = Task.query.get_or_404(id)
-    db.session.delete(todo)
+    db.session.delete(task)
     db.session.commit()
     return jsonify({"deleted": "true"})
 
