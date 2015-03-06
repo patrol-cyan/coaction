@@ -11,3 +11,5 @@ migrate = Migrate()
 from flask.ext.appconfig import AppConfig
 config = AppConfig()
 
+from flask.ext.bcrypt import Bcrypt
+bcrypt = Bcrypt()

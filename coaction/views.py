@@ -66,23 +66,26 @@ def update_task(id):
         resp.status_code = 400
         return resp
 
+
 @coaction.route("/api/tasks/<int:id>", methods=["DELETE"])
 def delete_task(id):
     task = Task.query.get_or_404(id)
-    db.session.delete(todo)
+    db.session.delete(task)
     db.session.commit()
     return jsonify({"deleted": "true"})
 
 @coaction.route("/api/tasks/<int:id>/comments", methods=["GET"])
 def get_comments(id):
+    pass
 
 
 @coaction.route("/api/tasks/<int:id>/comments", methods=["POST"])
 def add_comments(id):
-
+    pass
 
 @coaction.route("/api/tasks/<int:id>/comments", methods=["DELETE"]
 def delete_comments(id):
+    pass
 
     
 
