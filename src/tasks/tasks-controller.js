@@ -1,11 +1,11 @@
 app.config(['$routeProvider', function($routeProvider) {
   var routeDefinition = {
-    templateUrl: 'static/tasks/task.html',
+    templateUrl: 'static/tasks/tasks.html',
     controller: 'TasksCtrl',
     controllerAs: 'vm',
     resolve: {
-      tasks: ['tasksService', function (tasksService) {
-        return tasksService.list();
+      tasks: ['taskService', function (taskService) {
+        return taskService.getTaskList();
       }],
     }
   };

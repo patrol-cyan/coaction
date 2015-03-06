@@ -27,7 +27,7 @@ def make_shell_context():
 
 @manager.command
 def createdb():
-    """Creates the database with all model tables. 
+    """Creates the database with all model tables.
     Migrations are preferred."""
     db.create_all()
 
