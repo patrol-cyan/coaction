@@ -30,12 +30,13 @@ def add_task():
     if not request.get_json():
         return jsonify({'message': 'No input data provided'}), 400
     task_title = request.get_json().get('title')
+    task_description = request.get_json().get('description')
     task_data = request.get_json()
-    input_data = dict(title=task_title)
+    input_data = dict(title=task_title, description=task_description)
     errors = task_schema.validate(input_data)
     if errors:
         return jsonify(errors), 400
-    task = Task(title=task_title)
+    task = Task(title=task_title, description=task_description)
     db.session.add(task)
     db.session.commit()
     result = task_schema.dump(Task.query.get(task.id))
@@ -47,24 +48,21 @@ def add_task():
 def update_task(id):
     if not request.get_json():
         return jsonify({'message': 'No input data provided'}), 400
+    task = Task.query.get_or_404(id)
     task_title = request.get_json().get('title')
     task_data = request.get_json()
     input_data = dict(title=task_title)
     errors = task_schema.validate(input_data)
     if errors:
         return jsonify(errors), 400
-        task = Task(title=task_title)
-        db.session.add(task)
-        db.session.commit()
-        result = task_schema.dump(Task.query.get(task.id))
-        return jsonify({"message": "Updated current task.",
-                        "updatetask": result.data})
-        db.session.commit()
-        return jsonify(task.to_dict())
-    else:
-        resp = jsonify(errors)
-        resp.status_code = 400
-        return resp
+    task = Task(title=task_title)
+    db.session.add(task)
+    db.session.commit()
+    result = task_schema.dump(Task.query.get(task.id))
+    return jsonify({"message": "Updated current task.",
+                    "updatetask": result.data})
+
+
 
 
 @coaction.route("/api/tasks/<int:id>", methods=["DELETE"])
@@ -93,14 +91,16 @@ def login():
     #print db
     #form = LoginForm()
     #if form.validate_on_submit():
-        user = User.query.get(form.email.data)
-        if user:
-            if bcrypt.check_password_hash(user.password, form.password.data):
-                user.authenticated = True
-                db.session.add(user)
-                db.session.commit()
-                login_user(user, remember=True)
-                pass
+    #    user = User.query.get(form.email.data)
+    #    if user:
+    #      if bcrypt.check_password_hash(user.password, form.password.data):????????
+    #            user.authenticated = True
+    #            db.session.add(user)
+    #            db.session.commit()
+    #            login_user(user, remember=True)
+    #            return redirect(url_for("Main.page"))?????????????
+    #return render_template("login.html", form=form)
+
 
 
 @coaction.route("/api/logout", methods=["POST"])
