@@ -1,8 +1,8 @@
 from flask import Blueprint, flash, jsonify, request
-from .models import Task, TaskSchema
-from .forms import TodoForm
-from .extensions import db
+from .models import Task, TaskSchema, User
+from .extensions import db, login_manager
 from marshmallow import Schema, fields, ValidationError
+from flask.ext.login import login_required, login_user
 coaction = Blueprint("coaction", __name__, static_folder="./static")
 task_schema = TaskSchema()
 
@@ -86,6 +86,40 @@ def add_comments(id):
 @coaction.route("/api/tasks/<int:id>/comments", methods=["DELETE"])
 def delete_comments(id):
     pass
+
+
+@coaction.route("/api/login", methods=["POST"])
+def login():
+    #print db
+    #form = LoginForm()
+    #if form.validate_on_submit():
+        user = User.query.get(form.email.data)
+        if user:
+            if bcrypt.check_password_hash(user.password, form.password.data):
+                user.authenticated = True
+                db.session.add(user)
+                db.session.commit()
+                login_user(user, remember=True)
+                pass
+
+
+@coaction.route("/api/logout", methods=["POST"])
+@login_required
+def logout():
+    """Logout the current user."""
+    user = current_user
+    user.authenticated = False
+    db.session.add(user)
+    db.session.commit()
+    logout_user()
+    return jsonify({"message": "logout successful."})
+
+@login_manager.user_loader
+def user_loader(user_id):
+    """Given *user_id*, return the associated User object.
+    :param unicode user_id: user_id (email) user to retrieve
+    """
+    return User.query.get(user_id)
 
 
 

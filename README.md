@@ -118,3 +118,43 @@ Once you have your application ready -- or long before -- it should be deployed 
   * Try [Flask-Store](http://flask-store.soon.build/en/latest/)
   * If that doesn't work, check out https://github.com/doobeh/Flask-S3-Uploader and https://devcenter.heroku.com/articles/s3-upload-python
 * [Vega](https://trifacta.github.io/vega/). A simplified interface on top of D3 for charting. [NVD3](http://nvd3.org/) is another option.
+
+## How to work with manage.py
+
+### Installing requriements
+
+The command
+```
+pip3 install -r requirements.txt
+```
+will tell the Python package manager to install the libraries needed to run the project. We'll try to tell you before we use any new stuff so you'll know that you need to run pip3 install
+
+### Migrating the database.
+
+If we've changed the database, you'll need to run some upgrades. Usually, this should be as simple as:
+```
+python3 manage.py db upgrade
+```
+
+### Creating (pretty lame) fake tasks.
+```
+python3 manage.py fake_tasks
+```
+will put 3 really boring tasks in the database.
+
+## Locating/Navigating through the API
+
+| HTTP Method | URL                                       | Action        |
+|-------------|------------------------------------------|-----------------|
+| POST        | "/api/tasks"                             |  Add Task     |
+| PUT         | "/api/tasks/<int:id>/"                   | Update Task   |
+| DELETE      | "/api/tasks/<int:id>"           | Delete Task   |
+| GET         | "/api/tasks/<int:id>/comments"           | Get Comment   |
+| POST        | "/api/tasks/<int:id>/comments"           | Add Comment   |
+| DELETE      | "/api/tasks/<int:id>/comments"           | Delete Comment|
+| POST   | "/api/login"                             | Login User    |
+| POST        | "/api/logout"                            | Logout User   |
+
+
+
+
