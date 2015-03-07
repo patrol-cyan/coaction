@@ -37,9 +37,6 @@ app.controller('Error404Ctrl', ['$location', function ($location) {
 }]);
 
 app.factory('tasksService', ['$http', '$log', function($http, $log) {
-
-
-
   return {
     list: function () {
       // return [{

@@ -1,7 +1,4 @@
 app.factory('tasksService', ['$http', '$log', function($http, $log) {
-
-
-
   return {
     list: function () {
       // return [{

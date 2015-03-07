@@ -154,7 +154,3 @@ will put 3 really boring tasks in the database.
 | DELETE      | "/api/tasks/<int:id>/comments"           | Delete Comment|
 | POST   | "/api/login"                             | Login User    |
 | POST        | "/api/logout"                            | Logout User   |
-
-
-
-
