@@ -18,6 +18,7 @@ class Task(db.Model):
     owner = db.Column(db.Integer)
     assignee = db.Column(db.Integer)
     description = db.Column(db.String(255))
+    status = db.Column(db.String(255), nullable=False, default="TODO")
 
     def to_dict(self):
         resp = {"id": self.id,
@@ -42,9 +43,9 @@ def must_not_be_blank(data):
 
 class TaskSchema(Schema):
     title = fields.Str(required=True, validate=must_not_be_blank)
-
+    description = fields.Str()
     class Meta:
-        fields = ("id", "title")
+        fields = ("id", "title", "description   ")
 
 
 
