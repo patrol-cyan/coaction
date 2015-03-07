@@ -69,6 +69,13 @@ def delete_task(id):
     db.session.commit()
     return jsonify({"deleted": "true"})
 
+
+@coaction.route("/api/tasks/<int:id>", methods=["GET"])
+def get_task(id):
+    task = Task.query.get_or_404(id)
+    return jsonify(task=task.to_dict())
+
+
 @coaction.route("/api/tasks/<int:id>/comments", methods=["GET"])
 def get_comments(id):
     pass
