@@ -29,14 +29,12 @@ def view_tasks():
 def add_task():
     if not request.get_json():
         return jsonify({'message': 'No input data provided'}), 400
-    task_title = request.get_json().get('title')
-    task_description = request.get_json().get('description')
     task_data = request.get_json()
-    input_data = dict(title=task_title, description=task_description)
+    input_data = dict(**task_data)
     errors = task_schema.validate(input_data)
     if errors:
         return jsonify(errors), 400
-    task = Task(title=task_title, description=task_description)
+    task = Task(**task_data)
     db.session.add(task)
     db.session.commit()
     result = task_schema.dump(Task.query.get(task.id))
@@ -44,24 +42,23 @@ def add_task():
                     "task": result.data})
 
 
-@coaction.route("/api/tasks/<int:id>/", methods=["PUT"])
+@coaction.route("/api/tasks/<int:id>", methods=["PUT"])
 def update_task(id):
     if not request.get_json():
         return jsonify({'message': 'No input data provided'}), 400
     task = Task.query.get_or_404(id)
-    task_title = request.get_json().get('title')
     task_data = request.get_json()
-    input_data = dict(title=task_title)
+    for key, value in task_data.items():
+            setattr(task, key, value)
+    input_data = task.to_dict()
     errors = task_schema.validate(input_data)
     if errors:
         return jsonify(errors), 400
-    task = Task(title=task_title)
     db.session.add(task)
     db.session.commit()
     result = task_schema.dump(Task.query.get(task.id))
     return jsonify({"message": "Updated current task.",
                     "updatetask": result.data})
-
 
 
 
@@ -71,6 +68,13 @@ def delete_task(id):
     db.session.delete(task)
     db.session.commit()
     return jsonify({"deleted": "true"})
+
+
+@coaction.route("/api/tasks/<int:id>", methods=["GET"])
+def get_task(id):
+    task = Task.query.get_or_404(id)
+    return jsonify(task=task.to_dict())
+
 
 @coaction.route("/api/tasks/<int:id>/comments", methods=["GET"])
 def get_comments(id):

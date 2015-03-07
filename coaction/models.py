@@ -27,7 +27,9 @@ class Task(db.Model):
                 "started_status": self.started_status,
                 "due_date": self.due_date,
                 "owner": self.owner,
-                "assignee": self.assignee}
+                "assignee": self.assignee,
+                "description": self.description,
+                "status": self.status}
         return resp
 
 class Comment(db.Model):
@@ -44,8 +46,9 @@ def must_not_be_blank(data):
 class TaskSchema(Schema):
     title = fields.Str(required=True, validate=must_not_be_blank)
     description = fields.Str()
+
     class Meta:
-        fields = ("id", "title", "description   ")
+        fields = ("id", "title", "description")
 
 
 
