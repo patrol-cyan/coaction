@@ -1,0 +1,13 @@
+.a:link {
+  margin-right: 100%;
+}
+
+a {
+  color: $alt-bold-color;
+  text-decoration: none;
+  outline: none;
+}
+
+a:hover {
+  color: $alt-accent-bg;
+}

@@ -20,16 +20,16 @@ p {
   line-height: 1.4em;
   margin-bottom: 1em;
 }
-
-a {
-  color: $alt-bold-color;
-  text-decoration: none;
-  outline: none;
-}
-
-a:hover {
-  color: $alt-accent-bg;
-}
+//these are now on _tasks.scss
+// a {
+//   color: $alt-bold-color;
+//   text-decoration: none;
+//   outline: none;
+// }
+//
+// a:hover {
+//   color: $alt-accent-bg;
+// }
 
 td {
   padding: 0.25em 0.5em;

@@ -70,14 +70,6 @@ p {
   line-height: 1.4em;
   margin-bottom: 1em; }
 
-a {
-  color: #4F9EE5;
-  text-decoration: none;
-  outline: none; }
-
-a:hover {
-  color: #54CC14; }
-
 td {
   padding: 0.25em 0.5em; }
 
@@ -131,3 +123,14 @@ button {
 
 .main-nav-link.active {
   background: #4d5196; }
+
+.a:link {
+  margin-right: 100%; }
+
+a {
+  color: #4F9EE5;
+  text-decoration: none;
+  outline: none; }
+
+a:hover {
+  color: #54CC14; }
