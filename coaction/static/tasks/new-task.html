@@ -7,6 +7,14 @@
         <textarea class="new-task-desc" maxlength="200" ng-model="vm.task.description" placeholder="describe your new task to help you set any details"></textarea>
         <div class="new-task-text-count">{{200 - vm.task.description.length}} characters remaining</div>
      </div>
+     <select ng-model="vm.task.status">
+       <option value="" disabled selected>Select</option>
+       <option >TODO</option>
+       <option>DOING</option>
+       <option>DONE</option>
+     </select>
+
+     <input ng-model="vm.task.date" placeholder="mm/dd/yyyy">
   </div>
   <button>{{vm.saveText}}</button>
   <button ng-click="vm.goToTasks()">Cancel</button>
