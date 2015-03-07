@@ -227,7 +227,7 @@ app.factory('tasksService', ['$http', '$log', '$location', function($http, $log,
     },
 
     updateTask: function (task) {
-      return put('/api/tasks/' + task.id + '/', task);
+      return put('/api/tasks/' + task.id, task);
     },
 
     getTask: function (id) {
