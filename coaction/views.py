@@ -1,8 +1,9 @@
 from flask import Blueprint, flash, jsonify, request
 from .models import Task, TaskSchema, User
-from .extensions import db, login_manager
+from .forms import RegistrationForm, LoginForm
+from .extensions import db, login_manager, bcrypt
 from marshmallow import Schema, fields, ValidationError
-from flask.ext.login import login_required, login_user
+from flask.ext.login import login_required, login_user, logout_user, current_user
 coaction = Blueprint("coaction", __name__, static_folder="./static")
 task_schema = TaskSchema()
 
@@ -13,8 +14,6 @@ def index():
     return coaction.send_static_file("index.html")
 
 
-## Add your API views here
-
 
 @coaction.route("/api")
 def api():
@@ -24,6 +23,7 @@ def api():
 def view_tasks():
     tasks = [task.to_dict() for task in Task.query.all()]
     return jsonify(tasks=tasks)
+
 
 @coaction.route("/api/tasks", methods=["POST"])
 def add_task():
@@ -42,7 +42,7 @@ def add_task():
                     "task": result.data})
 
 
-@coaction.route("/api/tasks/<int:id>", methods=["PUT"])
+@coaction.route("/api/tasks/<int:id>", methods=["PUT", "PATCH"])
 def update_task(id):
     if not request.get_json():
         return jsonify({'message': 'No input data provided'}), 400
@@ -85,26 +85,58 @@ def get_comments(id):
 def add_comments(id):
     pass
 
+
 @coaction.route("/api/tasks/<int:id>/comments", methods=["DELETE"])
 def delete_comments(id):
     pass
 
 
+@coaction.route("/api/register", methods=["POST"])
+def register():
+    if not request.get_json():
+        return jsonify({'message': 'No input data provided'}), 400
+    data = request.get_json()
+    form = RegistrationForm(data=data, formdata=None, csrf_enabled=False)
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            return jsonify({"message": "User with that email already exists"}), 400
+        else:
+            user = User(name=form.name.data,
+                        email=form.email.data,
+                        password=form.password.data)
+            db.session.add(user)
+            db.session.commit()
+            login_user(user, remember=True)
+            return jsonify({"message": "Registered user."})
+
+
+@coaction.route("/api/users", methods=["GET"])
+def get_users():
+    users = [user.to_dict() for user in User.query.all()]
+    return jsonify(users=users)
+
+
 @coaction.route("/api/login", methods=["POST"])
 def login():
-    pass
-    #print db
-    #form = LoginForm()
-    #if form.validate_on_submit():
-    #    user = User.query.get(form.email.data)
-    #    if user:
-    #      if bcrypt.check_password_hash(user.password, form.password.data):????????
-    #            user.authenticated = True
-    #            db.session.add(user)
-    #            db.session.commit()
-    #            login_user(user, remember=True)
-    #            return redirect(url_for("Main.page"))?????????????
-    #return render_template("login.html", form=form)
+    if not request.get_json():
+        return jsonify({'message': 'No input data provided'}), 400
+    data = request.get_json()
+    form = LoginForm(data=data, formdata=None, csrf_enabled=False)
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            print(user.encrypted_password, form.password.data)
+            if bcrypt.check_password_hash(user.encrypted_password, form.password.data):
+                user.authenticated = True
+                db.session.add(user)
+                db.session.commit()
+                login_user(user, remember=True)
+                return jsonify({"message": "Logged in successfully."})
+            else:
+                return jsonify({"message": "Incorrect password"}), 400
+        else:
+            return jsonify({"message": "No user with that email."}), 400
 
 
 
@@ -119,18 +151,11 @@ def logout():
     logout_user()
     return jsonify({"message": "logout successful."})
 
+
 @login_manager.user_loader
 def user_loader(user_id):
     """Given *user_id*, return the associated User object.
     :param unicode user_id: user_id (email) user to retrieve
     """
     return User.query.get(user_id)
-
-
-
-    
-
-
-
-
 
