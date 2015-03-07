@@ -1,37 +1,4 @@
-app.factory('tasksService', ['$http', '$log', function($http, $log) {
-<<<<<<< HEAD
-  return {
-=======
 
-  function get(url) {
-      return processAjaxPromise($http.get(url));
-  }
-
-  function post(url, task) {
-    var p = $http.post(url, task);
-    return processAjaxPromise();
-  }
-
-  function put(url, task) {
-    return processAjaxPromise($http.put(url, task));
-  }
-
-  function remove(url) {
-    return processAjaxPromise($http.delete(url));
-  }
-
-  function processAjaxPromise(p) {
-    return p.then(function (result) {
-      return result.data;
-    })
-    .catch(function (error) {
-      $log.log(error);
-    });
-  }
-
-
-  var self = {
->>>>>>> 3857f0ff7aed96d3793c909ed66de8ffcc14bcb6
     list: function () {
       return get('/api/tasks').then(function (data) {
         return data.tasks;
