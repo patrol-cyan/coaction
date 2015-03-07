@@ -1,9 +1,9 @@
-body {
-  font-family: sans-serif;
-  line-height: 1.4em;
-  background: $bg-color;
-  color: $fg-color;
-}
+// body {
+//   font-family: $header-font;
+//   line-height: 1.4em;
+//   background: $bg-color;
+//   color: $bg-color;
+// }
 
 h1 { font-size: 2em; margin: .67em 0 }
 h2 { font-size: 1.5em; margin: .75em 0 }
@@ -20,7 +20,7 @@ p {
   line-height: 1.4em;
   margin-bottom: 1em;
 }
-//these are now on _tasks.scss
+// these are now on _tasks.scss
 // a {
 //   color: $alt-bold-color;
 //   text-decoration: none;

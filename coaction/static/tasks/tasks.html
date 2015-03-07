@@ -5,10 +5,17 @@
   <a href="#/tasks/new">Add a task</a>
   <ul>
     <li ng-repeat="task in vm.tasks">
+      <label>Mark as done
+        <input type="checkbox">
+      </label>
       <h2>{{task.title}}</h2>
       <p>
         {{task.description}}
       </p>
+      <div>
+        <span>{{task.dueDate}}</span>
+        <span>{{task.status}}</span>
+      </div>  
       <a href="#/tasks/{{task.id}}/edit">edit</a>
 
     </li>
