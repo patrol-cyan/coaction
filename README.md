@@ -121,7 +121,7 @@ Once you have your application ready -- or long before -- it should be deployed 
 
 ## How to work with manage.py
 
-### Installing requriements
+### Installing requirements.txt
 
 The command
 ```
