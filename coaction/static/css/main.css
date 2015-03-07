@@ -124,13 +124,13 @@ button {
 .main-nav-link.active {
   background: #4d5196; }
 
-.a:link {
-  margin-right: 100%; }
-
 a {
   color: #4F9EE5;
   text-decoration: none;
   outline: none; }
+
+.a:link {
+  margin-right: 100%; }
 
 a:hover {
   color: #54CC14; }

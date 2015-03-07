@@ -14,7 +14,45 @@ app.config(['$routeProvider', function ($routeProvider) {
 app.config(['$routeProvider', function($routeProvider) {
   var routeDefinition = {
     templateUrl: '/static/tasks/new-task.html',
-    controller: 'newTaskCtrl',
+    controller: 'EditTaskCtrl',
+    controllerAs: 'vm',
+    resolve: {
+      task: ['tasksService', '$route', function (tasksService, $route) {
+        return tasksService.getTask($route.current.params.taskId);
+      }],
+    }
+  };
+
+  $routeProvider.when('/tasks/:taskId/edit', routeDefinition)
+}])
+.controller('EditTaskCtrl', ['tasksService', 'task', '$location', function (tasksService, task, $location) {
+  var self = this;
+
+  self.title = 'Edit Task';//in order to change html elements for edit view
+
+  self.saveText = 'Save Task';
+
+  self.task = task;
+
+  self.saveTask = function () {
+    tasksService.updateTask(self.task).then(self.goToTasks);
+
+  };
+
+  self.goToTasks = function () {
+    $location.path('/tasks');
+  };
+
+  self.cancelTaskEdit = function () {
+    self.goToTasks();
+  };
+
+}]);
+
+app.config(['$routeProvider', function($routeProvider) {
+  var routeDefinition = {
+    templateUrl: '/static/tasks/new-task.html',
+    controller: 'NewTaskCtrl',
     controllerAs: 'vm',
     // resolve: {
     //   tasks: ['tasksService', function (tasksService) {
@@ -25,28 +63,53 @@ app.config(['$routeProvider', function($routeProvider) {
 
   $routeProvider.when('/tasks/new', routeDefinition)
 }])
-.controller('newTaskCtrl', ['tasksService', function (tasksService) {
+.controller('NewTaskCtrl', ['tasksService', 'Task', '$location', function (tasksService, Task, $location) {
   var self = this;
 
-  self.task = {
-    title: '',
-    description: '',
-  }
+  self.title = 'New Task';//in order to change html elements for edit view
+
+  self.saveText = 'Create Task';
+
+  self.task = Task();
+
+  self.saveTask = function () {
+    tasksService.addTask(self.task).then(self.goToTasks);
+
+  };
+
+  self.goToTasks = function () {
+    $location.path('/tasks');
+  };
+
+  self.cancelTaskEdit = function () {
+    self.goToTasks();
+  };
+
 }]);
 
+app.factory('Task', [ function() {
 
+  return function(spec) {
+    spec = spec || {};
 
-self.addShare = function () {
-    var share = self.newShare;
-    self.newShare = Share();
+    var self = {
+      assignee: spec.assignee,
+      completion_status: spec.completionStatus,
+      due_date: spec.dueDate,
+      id: spec.taskId,
+      owner: spec.userId,
+      started_status: spec.startedStatus || 'new',
+      title: spec.title,
+      description: spec.description,
+      comments: spec.comments || []
+      //not sure if this will work with how
+      //they're setting up the comment class
 
-    sharesService.addShare(share).then(function (data) {
-      self.shares = self.shares.filter(function (existingShare) {
-        return existingShare._id !== share._id;
-      });
-      refreshShares();
-    });
+    };
+
+    return self;
   };
+}]);
 
 app.config(['$routeProvider', function($routeProvider) {
   var routeDefinition = {
@@ -69,35 +132,123 @@ app.config(['$routeProvider', function($routeProvider) {
   self.tasks = tasks;
 }]);
 
+
+// app.config(['$routeProvider', function($routeProvider) {
+//   var routeDefinition = {
+//     templateUrl: 'shares/shares.html',
+//     controller: 'SharesCtrl',
+//     controllerAs: 'vm',
+//     resolve: {
+//       shares: ['shareService', function (shareService) {
+//         return shareService.getShareList();
+//       }]
+//     //   upvotes: ['voteService', function (voteService) {
+//     //     return VoteService.upvote();
+//     //   }],
+//     //   downvotes: ['voteService', function (voteService) {
+//     //     return VoteService.downvote();
+//     // }
+//   }
+// };
+//   $routeProvider.when('/', routeDefinition);
+//   $routeProvider.when('/shares', routeDefinition);
+// }])
+// .controller('SharesCtrl', ['$location', 'shares', 'shareService', 'Share', 'voteService', function ($location, shares, shareService, Share, voteService) {
+//
+//
+// var self = this;
+//
+//   self.shares = shares;
+//   // self.votes = function (upvote, downvote) {
+//   //   return votes = upvotes - downvotes;
+//   // };
+//
+//   self.upvote = function (share) {
+//     voteService.upvote(share);
+//   };
+//
+//   self.downvote = function (share) {
+//     voteService.downvote(share);
+//   };
+//
+//   self.goToComments = function(share) {
+//     $location.path('/shares/' + share._id + '/comments');
+//   };
+//
+//
+// }]);
+
 app.controller('Error404Ctrl', ['$location', function ($location) {
   this.message = 'Could not find: ' + $location.url();
 }]);
 
 app.factory('tasksService', ['$http', '$log', function($http, $log) {
+<<<<<<< HEAD
   return {
-    list: function () {
-      return $http.get('/api/tasks').then(function(result) {
-        return result.data.tasks;
-      }).catch(function(err) {
-        $log.log(err);
-        // throw err;
-      });
-    }
+=======
 
-  };
-}]);
+  function get(url) {
+      return processAjaxPromise($http.get(url));
+  }
 
+  function post(url, task) {
+    var p = $http.post(url, task);
+    return processAjaxPromise();
+  }
 
-self.addShare = function () {
-    var share = self.newShare;
-    self.newShare = Share();
+  function put(url, task) {
+    return processAjaxPromise($http.put(url, task));
+  }
 
-    sharesService.addShare(share).then(function (data) {
-      self.shares = self.shares.filter(function (existingShare) {
-        return existingShare._id !== share._id;
-      });
-      refreshShares();
+  function remove(url) {
+    return processAjaxPromise($http.delete(url));
+  }
+
+  function processAjaxPromise(p) {
+    return p.then(function (result) {
+      return result.data;
+    })
+    .catch(function (error) {
+      $log.log(error);
     });
+  }
+
+
+  var self = {
+>>>>>>> 3857f0ff7aed96d3793c909ed66de8ffcc14bcb6
+    list: function () {
+      return get('/api/tasks').then(function (data) {
+        return data.tasks;
+      });
+    },
+
+    addTask: function (task) {
+      return post('/api/tasks', task);
+    },
+
+    updateTask: function (task) {
+      return put('/api/tasks/' + task.id + '/', task);
+    },
+
+    getTask: function (id) {
+      id = Number(id);
+      return self.list().then(function (tasks) {
+        for (var i = 0; i < tasks.length; i++) {
+          if (tasks[i].id === id) {
+            return tasks[i];
+          }
+        }
+      });
+      //will remove what's above this when they fix api
+      // return get('/api/tasks/' + id);
+    },
+
+    deleteTask: function (id) {
+      return remove('/api/tasks/' + id);
+    }
   };
+
+  return self;
+}]);
 
 //# sourceMappingURL=app.js.map

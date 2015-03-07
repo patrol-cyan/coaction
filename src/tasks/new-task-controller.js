@@ -1,7 +1,7 @@
 app.config(['$routeProvider', function($routeProvider) {
   var routeDefinition = {
     templateUrl: '/static/tasks/new-task.html',
-    controller: 'newTaskCtrl',
+    controller: 'NewTaskCtrl',
     controllerAs: 'vm',
     // resolve: {
     //   tasks: ['tasksService', function (tasksService) {
@@ -12,25 +12,26 @@ app.config(['$routeProvider', function($routeProvider) {
 
   $routeProvider.when('/tasks/new', routeDefinition)
 }])
-.controller('newTaskCtrl', ['tasksService', function (tasksService) {
+.controller('NewTaskCtrl', ['tasksService', 'Task', '$location', function (tasksService, Task, $location) {
   var self = this;
 
-  self.task = {
-    title: '',
-    description: '',
-  }
-}]);
+  self.title = 'New Task';//in order to change html elements for edit view
 
+  self.saveText = 'Create Task';
 
+  self.task = Task();
 
-self.addShare = function () {
-    var share = self.newShare;
-    self.newShare = Share();
+  self.saveTask = function () {
+    tasksService.addTask(self.task).then(self.goToTasks);
 
-    sharesService.addShare(share).then(function (data) {
-      self.shares = self.shares.filter(function (existingShare) {
-        return existingShare._id !== share._id;
-      });
-      refreshShares();
-    });
   };
+
+  self.goToTasks = function () {
+    $location.path('/tasks');
+  };
+
+  self.cancelTaskEdit = function () {
+    self.goToTasks();
+  };
+
+}]);

@@ -1,26 +1,68 @@
 app.factory('tasksService', ['$http', '$log', function($http, $log) {
+<<<<<<< HEAD
   return {
-    list: function () {
-      return $http.get('/api/tasks').then(function(result) {
-        return result.data.tasks;
-      }).catch(function(err) {
-        $log.log(err);
-        // throw err;
-      });
-    }
+=======
 
-  };
-}]);
+  function get(url) {
+      return processAjaxPromise($http.get(url));
+  }
 
+  function post(url, task) {
+    var p = $http.post(url, task);
+    return processAjaxPromise();
+  }
 
-self.addShare = function () {
-    var share = self.newShare;
-    self.newShare = Share();
+  function put(url, task) {
+    return processAjaxPromise($http.put(url, task));
+  }
 
-    sharesService.addShare(share).then(function (data) {
-      self.shares = self.shares.filter(function (existingShare) {
-        return existingShare._id !== share._id;
-      });
-      refreshShares();
+  function remove(url) {
+    return processAjaxPromise($http.delete(url));
+  }
+
+  function processAjaxPromise(p) {
+    return p.then(function (result) {
+      return result.data;
+    })
+    .catch(function (error) {
+      $log.log(error);
     });
+  }
+
+
+  var self = {
+>>>>>>> 3857f0ff7aed96d3793c909ed66de8ffcc14bcb6
+    list: function () {
+      return get('/api/tasks').then(function (data) {
+        return data.tasks;
+      });
+    },
+
+    addTask: function (task) {
+      return post('/api/tasks', task);
+    },
+
+    updateTask: function (task) {
+      return put('/api/tasks/' + task.id + '/', task);
+    },
+
+    getTask: function (id) {
+      id = Number(id);
+      return self.list().then(function (tasks) {
+        for (var i = 0; i < tasks.length; i++) {
+          if (tasks[i].id === id) {
+            return tasks[i];
+          }
+        }
+      });
+      //will remove what's above this when they fix api
+      // return get('/api/tasks/' + id);
+    },
+
+    deleteTask: function (id) {
+      return remove('/api/tasks/' + id);
+    }
   };
+
+  return self;
+}]);

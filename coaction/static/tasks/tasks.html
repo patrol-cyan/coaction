@@ -1,20 +1,17 @@
-<!-- creating the new tasks column & doing column -->
-<div class="tasks-overview">
-  <h1 class="greeting-user-header">hello, Ethel!</h1>
+<div class="tasks">
+
+<h1 class="greeting-user-header">hello, Ethel!</h1>
   <h3>here are your tasks</h3>
-  <!-- <button class="submit-task">Add a task</button> -->
-      <!--what's the difference btw the button & a href?-->
-      <a href class="#/tasks/new">Add a task</a>
-      <!--do we want to add this: <button ng-click="vm.cancelEditing()">Cancel</button> -->
-      <!--is this ul/li code to be used for the two columns of todo & doing? -->
-      <!--and do we need to add input/text fields after the <p> & remove the above form? mn-->
-      <ul>
-        <li ng-repeat="task in vm.tasks">
-        <h2>{{task.title}}</h2>
-        <p>
-          {{task.description}}
-        </p>
-        </li>
-     </ul>
- </form>
+  <a href="#/tasks/new">Add a task</a>
+  <ul>
+    <li ng-repeat="task in vm.tasks">
+      <h2>{{task.title}}</h2>
+      <p>
+        {{task.description}}
+      </p>
+      <a href="#/tasks/{{task.id}}/edit">edit</a>
+
+    </li>
+  </ul>
+
 </div>
