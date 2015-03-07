@@ -73,7 +73,7 @@ def delete_task(id):
 @coaction.route("/api/tasks/<int:id>", methods=["GET"])
 def get_task(id):
     task = Task.query.get_or_404(id)
-    return jsonify(task=task.to_dict())
+    return jsonify(task.to_dict())
 
 
 @coaction.route("/api/tasks/<int:id>/comments", methods=["GET"])
