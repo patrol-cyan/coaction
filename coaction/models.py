@@ -18,7 +18,7 @@ class Task(db.Model):
     owner = db.Column(db.Integer)
     assignee = db.Column(db.Integer)
     description = db.Column(db.String(255))
-    status = db.Column(db.String(255), nullable=False, default="TODO")
+    status = db.Column(db.String(255), default="TODO")
 
     def to_dict(self):
         resp = {"id": self.id,
