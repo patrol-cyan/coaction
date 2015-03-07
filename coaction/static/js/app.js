@@ -182,7 +182,7 @@ app.controller('Error404Ctrl', ['$location', function ($location) {
   this.message = 'Could not find: ' + $location.url();
 }]);
 
-app.factory('tasksService', ['$http', '$log', function($http, $log) {
+app.factory('tasksService', ['$http', '$log', '$location', function($http, $log, $location) {
 
   function get(url) {
       return processAjaxPromise($http.get(url));
@@ -206,6 +206,10 @@ app.factory('tasksService', ['$http', '$log', function($http, $log) {
       return result.data;
     })
     .catch(function (error) {
+      if (error.status === 401) {
+        // We're not logged in..!!!
+        $location.path('/login');
+      }
       $log.log(error);
     });
   }
