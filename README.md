@@ -146,7 +146,7 @@ will put 3 really boring tasks in the database.
 
 | HTTP Method | URL                                      |  Action         |
 |-------------|------------------------------------------|-----------------|
-| GET         | "/api/tasks"                             |  Get All Tasks  |
+| GET         | '''/api/tasks'''                             |  Get All Tasks  |
 | POST        | "/api/tasks"                             |  Add Task       |
 | PUT         | "/api/tasks/<int:id>/"                   | Update Task     |
 | DELETE      | "/api/tasks/<int:id>"                    | Delete Task     |
