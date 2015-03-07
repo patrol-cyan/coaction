@@ -14,7 +14,45 @@ app.config(['$routeProvider', function ($routeProvider) {
 app.config(['$routeProvider', function($routeProvider) {
   var routeDefinition = {
     templateUrl: '/static/tasks/new-task.html',
-    controller: 'newTaskCtrl',
+    controller: 'EditTaskCtrl',
+    controllerAs: 'vm',
+    resolve: {
+      task: ['tasksService', '$route', function (tasksService, $route) {
+        return tasksService.getTask($route.current.params.taskId);
+      }],
+    }
+  };
+
+  $routeProvider.when('/tasks/:taskId/edit', routeDefinition)
+}])
+.controller('EditTaskCtrl', ['tasksService', 'task', '$location', function (tasksService, task, $location) {
+  var self = this;
+
+  self.title = 'Edit Task';//in order to change html elements for edit view
+
+  self.saveText = 'Save Task';
+
+  self.task = task;
+
+  self.saveTask = function () {
+    tasksService.updateTask(self.task).then(self.goToTasks);
+
+  };
+
+  self.goToTasks = function () {
+    $location.path('/tasks');
+  };
+
+  self.cancelTaskEdit = function () {
+    self.goToTasks();
+  };
+
+}]);
+
+app.config(['$routeProvider', function($routeProvider) {
+  var routeDefinition = {
+    templateUrl: '/static/tasks/new-task.html',
+    controller: 'NewTaskCtrl',
     controllerAs: 'vm',
     // resolve: {
     //   tasks: ['tasksService', function (tasksService) {
@@ -25,19 +63,18 @@ app.config(['$routeProvider', function($routeProvider) {
 
   $routeProvider.when('/tasks/new', routeDefinition)
 }])
-.controller('NewTaskCtrl', ['tasksService', '$location', 'Task', function (tasksService, Task, $location) {
+.controller('NewTaskCtrl', ['tasksService', 'Task', '$location', function (tasksService, Task, $location) {
   var self = this;
+
+  self.title = 'New Task';//in order to change html elements for edit view
+
+  self.saveText = 'Create Task';
 
   self.task = Task();
 
-  self.addTask = function () {
+  self.saveTask = function () {
     tasksService.addTask(self.task).then(self.goToTasks);
-    // function (){
-    //   self.shares = self.shares.filter(function (existingShare) {
-    //     return existingShare._id !== share._id;
-    //   });
-    //   refreshShares();
-    // };
+
   };
 
   self.goToTasks = function () {
@@ -149,44 +186,65 @@ app.factory('tasksService', ['$http', '$log', function($http, $log) {
 
   function get(url) {
       return processAjaxPromise($http.get(url));
-    }
+  }
 
-    function post(url, task) {
-      return processAjaxPromise($http.post(url, task));
-    }
+  function post(url, task) {
+    var p = $http.post(url, task);
+    return processAjaxPromise();
+  }
 
-    function remove(url) {
-      return processAjaxPromise($http.delete(url));
+  function put(url, task) {
+    return processAjaxPromise($http.put(url, task));
+  }
 
-    }
+  function remove(url) {
+    return processAjaxPromise($http.delete(url));
+  }
 
-    function processAjaxPromise(p) {
-      return p.then(function (result) {
-        return result.data;
-      })
-      .catch(function (error) {
-        $log.log(error);
-      });
-    }
+  function processAjaxPromise(p) {
+    return p.then(function (result) {
+      return result.data;
+    })
+    .catch(function (error) {
+      $log.log(error);
+    });
+  }
 
 
-  return {
+  var self = {
     list: function () {
-      return get('/api/tasks');
+      return get('/api/tasks').then(function (data) {
+        return data.tasks;
+      });
     },
 
     addTask: function (task) {
       return post('/api/tasks', task);
     },
 
+    updateTask: function (task) {
+      return put('/api/tasks/' + task.id + '/', task);
+    },
+
     getTask: function (id) {
-      return get('/api/tasks/' + id);
+      id = Number(id);
+      return self.list().then(function (tasks) {
+        for (var i = 0; i < tasks.length; i++) {
+          if (tasks[i].id === id) {
+            return tasks[i];
+          }
+        }
+      });
+      //will remove what's above this when they fix api
+      // return get('/api/tasks/' + id);
     },
 
     deleteTask: function (id) {
       return remove('/api/tasks/' + id);
     }
   };
+
+  return self;
 }]);
 
 //# sourceMappingURL=app.js.map

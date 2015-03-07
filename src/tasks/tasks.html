@@ -1,6 +1,7 @@
 <div class="tasks">
 
-<h1>Testing</h1>
+<h1 class="greeting-user-header">hello, Ethel!</h1>
+  <h3>here are your tasks</h3>
   <a href="#/tasks/new">Add a task</a>
   <ul>
     <li ng-repeat="task in vm.tasks">
@@ -8,6 +9,8 @@
       <p>
         {{task.description}}
       </p>
+      <a href="#/tasks/{{task.id}}/edit">edit</a>
+
     </li>
   </ul>
 
