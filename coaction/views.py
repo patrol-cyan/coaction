@@ -56,18 +56,21 @@ def add_task():
 
 @coaction.route("/api/tasks/<int:id>", methods=["PUT", "PATCH"])
 def update_task(id):
+    task_serializer = TaskSchema()
     if not request.get_json():
         return jsonify({'message': 'No input data provided'}), 400
     task = Task.query.get_or_404(id)
     task_data = request.get_json()
+    old_task = task_serializer.dump(task)
+    old_data = old_task.data
     if "due_date" in task_data and task_data["due_date"]:
         task_data["due_date"] = datetime.datetime.strptime(task_data["due_date"], "%m/%d/%y")
-    for key, value in task_data.items():
-            setattr(task, key, value)
-    input_data = task.to_dict()
-    errors = task_schema.validate(input_data)
+    my_object = task_serializer.load(old_data)
+    errors = task_schema.validate(old_data)
     if errors:
         return jsonify(errors), 400
+    for key, value in my_object.data.items():
+        setattr(task, key, value)
     db.session.add(task)
     db.session.commit()
     result = task_schema.dump(Task.query.get(task.id))
