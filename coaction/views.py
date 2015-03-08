@@ -41,6 +41,8 @@ def add_task():
     task_data = request.get_json()
     if "due_date" in task_data:
         task_data["due_date"] = datetime.datetime.strptime(task_data["due_date"], "%m/%d/%y")
+    if not "owner" in task_data:
+        task_data["owner"] = current_user.id
     errors = task_schema.validate(task_data)
     if errors:
         return jsonify(errors), 400
