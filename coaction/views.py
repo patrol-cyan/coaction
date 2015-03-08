@@ -41,7 +41,6 @@ def add_task():
     task_data = request.get_json()
     if "due_date" in task_data:
         task_data["due_date"] = datetime.datetime.strptime(task_data["due_date"], "%m/%d/%y")
-
     errors = task_schema.validate(task_data)
     if errors:
         return jsonify(errors), 400
@@ -59,6 +58,8 @@ def update_task(id):
         return jsonify({'message': 'No input data provided'}), 400
     task = Task.query.get_or_404(id)
     task_data = request.get_json()
+    if "due_date" in task_data:
+        task_data["due_date"] = datetime.datetime.strptime(task_data["due_date"], "%m/%d/%y")
     for key, value in task_data.items():
             setattr(task, key, value)
     input_data = task.to_dict()
