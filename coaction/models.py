@@ -2,6 +2,7 @@ from .extensions import db, bcrypt
 from marshmallow import Schema, fields, ValidationError
 from flask.ext.login import UserMixin
 
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(255), nullable=False)
@@ -52,6 +53,7 @@ class Task(db.Model):
                 "status": self.status}
         return resp
 
+
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     text = db.Column(db.String(255), nullable=False)
@@ -63,18 +65,22 @@ def must_not_be_blank(data):
     if not data:
         raise ValidationError('Data not provided.')
 
+
 class TaskSchema(Schema):
     title = fields.Str(required=True, validate=must_not_be_blank)
 
     class Meta:
-        fields = ("id", "title", "description", "status", "owner", "assignee", "due_date")
+        fields = ("id", "title", "description", "status", "owner",
+                  "assignee", "due_date")
 
 
 class UserSchema(Schema):
     name = fields.String()
     email = fields.Email()
+
     class Meta:
         fields = ("id", "name", "email")
+
 
 class CommentSchema(Schema):
     text = fields.String()
@@ -82,5 +88,5 @@ class CommentSchema(Schema):
     class Meta:
         fields = ("id", "text", "user", "task_id")
 
-
-
+    def make_object(self, data):
+        return Comment(**data)
