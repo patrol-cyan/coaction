@@ -2,7 +2,7 @@
 
 <form class="task-form" ng-submit="vm.saveTask()">
  <div class="new-task-container">
-    <button ng-click="vm.deleteTask()">Delete this task</button>
+    <button ng-show="vm.task.id" ng-click="vm.deleteTask()">Delete this task</button>
     <input class="new-task-title" type="text" ng-model="vm.task.title" placeholder="title of task">
     <div class="textarea-container">
       <textarea class="new-task-desc" maxlength="200" ng-model="vm.task.description" placeholder="describe your new task to help you set any details"></textarea>

@@ -3,11 +3,6 @@ app.config(['$routeProvider', function($routeProvider) {
     templateUrl: '/static/tasks/new-task.html',
     controller: 'NewTaskCtrl',
     controllerAs: 'vm',
-    // resolve: {
-    //   tasks: ['tasksService', function (tasksService) {
-    //     return tasksService.addTask();
-    //   }],
-    // }
   };
 
   $routeProvider.when('/tasks/new', routeDefinition)

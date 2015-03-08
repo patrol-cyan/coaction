@@ -1,12 +1,11 @@
 app.factory('tasksService', ['$http', '$log', '$location', function($http, $log, $location) {
 
   function get(url) {
-      return processAjaxPromise($http.get(url));
+    return processAjaxPromise($http.get(url));
   }
 
   function post(url, task) {
-    var p = $http.post(url, task);
-    return processAjaxPromise();
+    return processAjaxPromise($http.post(url, task));
   }
 
   function put(url, task) {
@@ -47,15 +46,6 @@ app.factory('tasksService', ['$http', '$log', '$location', function($http, $log,
     },
 
     getTask: function (id) {
-      // id = Number(id);
-      // return self.list().then(function (tasks) {
-      //   for (var i = 0; i < tasks.length; i++) {
-      //     if (tasks[i].id === id) {
-      //       return tasks[i];
-      //     }
-      //   }
-      // });
-      //will remove what's above this when they fix api
       return get('/api/tasks/' + id);
     },
 
