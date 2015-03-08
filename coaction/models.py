@@ -65,10 +65,16 @@ def must_not_be_blank(data):
 
 class TaskSchema(Schema):
     title = fields.Str(required=True, validate=must_not_be_blank)
-    description = fields.Str()
 
     class Meta:
-        fields = ("id", "title", "description")
+        fields = ("id", "title", "description", "status", "owner", "assignee", "due_date")
+
+
+class UserSchema(Schema):
+    name = fields.String()
+    email = fields.Email()
+    class Meta:
+        fields = ("id", "name", "email")
 
 
 
