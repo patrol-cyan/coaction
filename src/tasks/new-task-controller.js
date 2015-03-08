@@ -23,7 +23,6 @@ app.config(['$routeProvider', function($routeProvider) {
 
   self.saveTask = function () {
     tasksService.addTask(self.task).then(self.goToTasks);
-
   };
 
   self.goToTasks = function () {

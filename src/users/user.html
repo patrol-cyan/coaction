@@ -1,0 +1,16 @@
+<div class="user-info">
+
+  <h1>{{ vm.name }}</h1>
+
+  <img class="user-img" ng-src="{{ vm.github.avatar_url }}"/>
+  <p>
+    Role: {{vm.user.role}}
+  </p>
+  <p>
+    {{ vm.github.location }}
+  </p>
+  <p ng-if="{{ vm.github.bio }}">
+    {{ vm.github.bio }}
+  </p>
+
+</div>

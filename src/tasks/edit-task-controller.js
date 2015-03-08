@@ -23,7 +23,10 @@ app.config(['$routeProvider', function($routeProvider) {
 
   self.saveTask = function () {
     tasksService.updateTask(self.task).then(self.goToTasks);
+  };
 
+  self.deleteTask = function () {
+    tasksService.deleteTask(self.task).then(self.goToTasks);
   };
 
   self.goToTasks = function () {

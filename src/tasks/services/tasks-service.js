@@ -59,8 +59,8 @@ app.factory('tasksService', ['$http', '$log', '$location', function($http, $log,
       return get('/api/tasks/' + id);
     },
 
-    deleteTask: function (id) {
-      return remove('/api/tasks/' + id);
+    deleteTask: function (task) {
+      return remove('/api/tasks/' + task.id, task);
     }
   };
 

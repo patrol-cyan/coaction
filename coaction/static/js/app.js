@@ -11,6 +11,22 @@ app.config(['$routeProvider', function ($routeProvider) {
   });
 }]);
 
+app.controller('MainNavCtrl',
+  ['$location', 'StringUtil', function($location, StringUtil) {
+    var self = this;
+
+    self.isActive = function (path) {
+      // The default route is a special case.
+      if (path === '/') {
+        return $location.path() === '/';
+      }
+
+      return StringUtil.startsWith($location.path(), path);
+    };
+  }]);
+  
+
+
 app.config(['$routeProvider', function($routeProvider) {
   var routeDefinition = {
     templateUrl: '/static/tasks/new-task.html',
@@ -36,7 +52,10 @@ app.config(['$routeProvider', function($routeProvider) {
 
   self.saveTask = function () {
     tasksService.updateTask(self.task).then(self.goToTasks);
+  };
 
+  self.deleteTask = function () {
+    tasksService.deleteTask(self.task).then(self.goToTasks);
   };
 
   self.goToTasks = function () {
@@ -74,7 +93,6 @@ app.config(['$routeProvider', function($routeProvider) {
 
   self.saveTask = function () {
     tasksService.addTask(self.task).then(self.goToTasks);
-
   };
 
   self.goToTasks = function () {
@@ -100,7 +118,7 @@ app.factory('Task', [ function() {
       id: spec.taskId,
       owner: spec.userId,
       started_status: spec.startedStatus || 'new',
-      status: spec.status,
+      status: spec.status || 'TODO',
       title: spec.title,
       comments: spec.comments || []
       //not sure if this will work with how
@@ -133,50 +151,81 @@ app.config(['$routeProvider', function($routeProvider) {
   self.tasks = tasks;
 }]);
 
+app.factory('User', function () {
+  return function (spec) {
+    spec = spec || {};
+    return {
+      userId: spec.userId || '',
+      role: spec.role || 'user'
+    };
+  };
+});
+
+app.config(['$routeProvider', function($routeProvider) {
+  var routeDefinition = {
+    templateUrl: 'static/users/user.html',
+    controller: 'UsersCtrl',
+    controllerAs: 'vm',
+    resolve: {
+      users: ['usersService', function (usersService) {
+        return usersService.list();
+      }]
+    }
+  };
+
+  $routeProvider.when('/users', routeDefinition);
+}])
+.controller('UsersCtrl', ['users', 'usersService', 'User', function (users, usersService, User) {
+  var self = this;
+
+  self.users = users;
+
+  self.newUser = User();
+
+  self.addUser = function () {
+    // Make a copy of the 'newUser' object
+    var user = User(self.newUser);
+
+    // Add the user to our service
+    usersService.addUser(user).then(function () {
+      // If the add succeeded, remove the user from the users array
+      self.users = self.users.filter(function (existingUser) {
+        return existingUser.userId !== user.userId;
+      });
+
+      // Add the user to the users array
+      self.users.push(user);
+    });
+
+    // Clear our newUser property
+    self.newUser = User();
+  };
+}]);
+
 
 // app.config(['$routeProvider', function($routeProvider) {
 //   var routeDefinition = {
-//     templateUrl: 'shares/shares.html',
-//     controller: 'SharesCtrl',
+//     templateUrl: 'users/user.html',
+//     controller: 'UserCtrl',
 //     controllerAs: 'vm',
 //     resolve: {
-//       shares: ['shareService', function (shareService) {
-//         return shareService.getShareList();
+//       user: ['$route', 'usersService', function ($route, usersService) {
+//         var routeParams = $route.current.params;
+//         return usersService.getByUserId(routeParams.userid);
+//       }],
+//       github: ['$route', '$http', function ($route, $http) {
+//         var routeParams = $route.current.params;
+//         return $http.get('https://api.github.com/users/' + routeParams.userid);
 //       }]
-//     //   upvotes: ['voteService', function (voteService) {
-//     //     return VoteService.upvote();
-//     //   }],
-//     //   downvotes: ['voteService', function (voteService) {
-//     //     return VoteService.downvote();
-//     // }
-//   }
-// };
-//   $routeProvider.when('/', routeDefinition);
-//   $routeProvider.when('/shares', routeDefinition);
+//     }
+//   };
+//
+//   $routeProvider.when('/users/:userid', routeDefinition);
 // }])
-// .controller('SharesCtrl', ['$location', 'shares', 'shareService', 'Share', 'voteService', function ($location, shares, shareService, Share, voteService) {
-//
-//
-// var self = this;
-//
-//   self.shares = shares;
-//   // self.votes = function (upvote, downvote) {
-//   //   return votes = upvotes - downvotes;
-//   // };
-//
-//   self.upvote = function (share) {
-//     voteService.upvote(share);
-//   };
-//
-//   self.downvote = function (share) {
-//     voteService.downvote(share);
-//   };
-//
-//   self.goToComments = function(share) {
-//     $location.path('/shares/' + share._id + '/comments');
-//   };
-//
-//
+// .controller('UserCtrl', ['user', 'github', function (user, github) {
+//   this.user = user;
+//   this.github = github.data;
+//   console.log(this.github);
 // }]);
 
 app.controller('Error404Ctrl', ['$location', function ($location) {
@@ -244,12 +293,57 @@ app.factory('tasksService', ['$http', '$log', '$location', function($http, $log,
       return get('/api/tasks/' + id);
     },
 
-    deleteTask: function (id) {
-      return remove('/api/tasks/' + id);
+    deleteTask: function (task) {
+      return remove('/api/tasks/' + task.id, task);
     }
   };
 
   return self;
+}]);
+
+app.factory('currentUser', ['$http', function($http) {
+
+  var current = {
+    user: undefined,
+    github: undefined
+  };
+
+  $http.get('/api/users/me').then(function(result) {
+    current.user = result.data;
+    $http.get('https://api.github.com/users/' + current.user.userId ).then(function(result) {
+      current.github = result.data;
+    });
+  }).catch(function(err) {
+    current.user = undefined;
+  });
+
+  return current;
+}]);
+
+app.factory('usersService', ['$http', '$q', '$log', 'ajaxHelper', function($http, $q, $log, ajaxHelper) {
+
+  return {
+    list: function () {
+      return ajaxHelper.call($http.get('/api/users'));
+    },
+
+    getByUserId: function (userId) {
+      if (!userId) {
+        throw new Error('getByUserId requires a user id');
+      }
+
+      return ajaxHelper.call($http.get('/api/users/' + userId));
+    },
+
+    addUser: function (user) {
+      return ajaxHelper.call($http.post('/api/users', user));
+    },
+
+    getCurrentUser: function() {
+      return ajaxHelper.call($http.get('/api/users/me'));
+    }
+
+  };
 }]);
 
 //# sourceMappingURL=app.js.map

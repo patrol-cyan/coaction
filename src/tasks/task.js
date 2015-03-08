@@ -11,7 +11,7 @@ app.factory('Task', [ function() {
       id: spec.taskId,
       owner: spec.userId,
       started_status: spec.startedStatus || 'new',
-      status: spec.status,
+      status: spec.status || 'TODO',
       title: spec.title,
       comments: spec.comments || []
       //not sure if this will work with how
