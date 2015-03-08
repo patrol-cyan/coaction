@@ -1,7 +1,7 @@
 from .extensions import db, bcrypt
 from marshmallow import Schema, fields, ValidationError
 from flask.ext.login import UserMixin
-from sqlalchemy.exc import IntegrityError
+
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
