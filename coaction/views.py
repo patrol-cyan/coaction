@@ -14,7 +14,6 @@ def index():
     return coaction.send_static_file("index.html")
 
 
-
 @coaction.route("/api")
 def api():
     return ""
@@ -96,7 +95,7 @@ def add_comments(id):
 def delete_comments(id):
     if not request.get_json():
         return jsonify({"message": 'No input data provided'}), 400
-    
+
     pass
 
 
@@ -108,8 +107,11 @@ def register():
     form = RegistrationForm(data=data, formdata=None, csrf_enabled=False)
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
+        name = User.query.filter_by(name=form.name.data).first()
         if user:
-            return jsonify({"message": "User with that email already exists"}), 400
+            return jsonify({"message": "User with that email already exists."}), 400
+        elif name:
+            return jsonify({"message": "User with that name already exists."}), 400
         else:
             user = User(name=form.name.data,
                         email=form.email.data,
