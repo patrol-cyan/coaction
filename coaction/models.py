@@ -76,7 +76,11 @@ class UserSchema(Schema):
     class Meta:
         fields = ("id", "name", "email")
 
+class CommentSchema(Schema):
+    text = fields.String()
 
+    class Meta:
+        fields = ("id", "text", "user", "task_id")
 
 
 
