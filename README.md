@@ -146,14 +146,15 @@ will put 3 really boring tasks in the database.
 
 | HTTP Method | URL                                          |  Action         |
 |-------------|----------------------------------------------|-----------------|
-| GET         | ```/api/tasks```                             |  Get All Tasks  |
-| POST        | ```/api/tasks```                             |  Add Task       |
-| PUT         | ```/api/tasks/<int:id>```                    | Update Task     |
+| GET         | ```/api/tasks```                             | Get All Tasks   |
+| POST        | ```/api/tasks```                             | Add Task        |
+| PUT, PATCH  | ```/api/tasks/<int:id>```                    | Update Task     |
 | DELETE      | ```/api/tasks/<int:id>```                    | Delete Task     |
 | GET         | ```api/tasks/<int:id>```                     | Get Task        |
 | GET         | ```/api/tasks/<int:id>/comments```           | Get Comment     |
 | POST        | ```/api/tasks/<int:id>/comments```           | Add Comment     |
 | DELETE      | ```/api/tasks/<int:id>/comments```           | Delete Comment  |
+| POST        | ```/api/register```                          | Register User   |
 | POST        | ```/api/login```                             | Login User      |
 | POST        | ```/api/logout```                            | Logout User     |
 
