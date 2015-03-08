@@ -78,16 +78,25 @@ def get_task(id):
 
 @coaction.route("/api/tasks/<int:id>/comments", methods=["GET"])
 def get_comments(id):
+    if not request.get_json():
+        return jsonify({"message": 'No input data provided'}), 400
+
     pass
 
 
 @coaction.route("/api/tasks/<int:id>/comments", methods=["POST"])
 def add_comments(id):
+    if not request.get_json():
+        return jsonify({"message": 'No input data provided'}), 400
+
     pass
 
 
 @coaction.route("/api/tasks/<int:id>/comments", methods=["DELETE"])
 def delete_comments(id):
+    if not request.get_json():
+        return jsonify({"message": 'No input data provided'}), 400
+    
     pass
 
 
