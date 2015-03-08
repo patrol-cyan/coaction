@@ -1,14 +1,13 @@
 import datetime
-from flask import Blueprint, flash, jsonify, request
+from flask import Blueprint, jsonify, request
 from .models import Task, TaskSchema, User, Comment, UserSchema, CommentSchema
 from .forms import RegistrationForm, LoginForm
 from .extensions import db, login_manager, bcrypt
-from marshmallow import Schema, fields, ValidationError
-from flask.ext.login import login_required, login_user, logout_user, current_user
+from flask.ext.login import login_required, login_user, logout_user, \
+    current_user
 from sqlalchemy import or_
 coaction = Blueprint("coaction", __name__, static_folder="./static")
 task_schema = TaskSchema()
-
 
 
 @coaction.route("/")
@@ -19,6 +18,7 @@ def index():
 @coaction.route("/api")
 def api():
     return ""
+
 
 @coaction.route("/api/tasks", methods=["GET"])
 def view_tasks():
@@ -39,8 +39,10 @@ def add_task():
     if not request.get_json():
         return jsonify({'message': 'No input data provided'}), 400
     task_data = request.get_json()
-    if "due_date" in task_data:
+    if "due_date" in task_data and task_data["due_date"]:
         task_data["due_date"] = datetime.datetime.strptime(task_data["due_date"], "%m/%d/%y")
+    if not "owner" in task_data:
+        task_data["owner"] = current_user.id
     errors = task_schema.validate(task_data)
     if errors:
         return jsonify(errors), 400
@@ -58,7 +60,7 @@ def update_task(id):
         return jsonify({'message': 'No input data provided'}), 400
     task = Task.query.get_or_404(id)
     task_data = request.get_json()
-    if "due_date" in task_data:
+    if "due_date" in task_data and task_data["due_date"]:
         task_data["due_date"] = datetime.datetime.strptime(task_data["due_date"], "%m/%d/%y")
     for key, value in task_data.items():
             setattr(task, key, value)
@@ -71,7 +73,6 @@ def update_task(id):
     result = task_schema.dump(Task.query.get(task.id))
     return jsonify({"message": "Updated current task.",
                     "updatetask": result.data})
-
 
 
 @coaction.route("/api/tasks/<int:id>", methods=["DELETE"])
@@ -105,6 +106,9 @@ def add_comments(id):
     comment_data = request.get_json()
     comment_serializer = CommentSchema()
     result = comment_serializer.dump(comment_data)
+
+    return jsonify({"message": "Comment added.",
+                    "comment": result.data})
 
 
     pass
