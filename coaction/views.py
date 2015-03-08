@@ -1,5 +1,5 @@
 from flask import Blueprint, flash, jsonify, request
-from .models import Task, TaskSchema, User
+from .models import Task, TaskSchema, User, Comment, UserSchema
 from .forms import RegistrationForm, LoginForm
 from .extensions import db, login_manager, bcrypt
 from marshmallow import Schema, fields, ValidationError
@@ -20,8 +20,10 @@ def api():
 
 @coaction.route("/api/tasks", methods=["GET"])
 def view_tasks():
-    tasks = [task.to_dict() for task in Task.query.all()]
-    return jsonify(tasks=tasks)
+    tasks = Task.query.all()
+    serializer = TaskSchema(many=True)
+    result = serializer.dump(tasks)
+    return jsonify({"tasks": result.data})
 
 
 @coaction.route("/api/tasks", methods=["POST"])
@@ -72,7 +74,9 @@ def delete_task(id):
 @coaction.route("/api/tasks/<int:id>", methods=["GET"])
 def get_task(id):
     task = Task.query.get_or_404(id)
-    return jsonify(task.to_dict())
+    serializer = TaskSchema()
+    result = serializer.dump(task)
+    return jsonify(result.data)
 
 
 @coaction.route("/api/tasks/<int:id>/comments", methods=["GET"])
@@ -91,10 +95,10 @@ def add_comments(id):
     pass
 
 
-@coaction.route("/api/tasks/<int:id>/comments", methods=["DELETE"])
-def delete_comments(id):
-    if not request.get_json():
-        return jsonify({"message": 'No input data provided'}), 400
+@coaction.route("/api/tasks/<int:id>/comments/<int:comment_id>", methods=["DELETE"])
+def delete_comments(id, comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+
 
     pass
 
@@ -124,8 +128,22 @@ def register():
 
 @coaction.route("/api/users", methods=["GET"])
 def get_users():
-    users = [user.to_dict() for user in User.query.all()]
-    return jsonify(users=users)
+    users = User.query.all()
+    serializer = UserSchema(many=True)
+    result = serializer.dump(users)
+    return jsonify({"users": result.data})
+
+
+@coaction.route("/api/users/current", methods=["GET"])
+def get_current_user():
+    if current_user.is_authenticated():
+        user_id = current_user.id
+        user = User.query.get_or_404(user_id)
+        serializer = UserSchema()
+        result = serializer.dump(user)
+        return jsonify({"current_user": result.data})
+    else:
+        return jsonify({"message": "User not logged in."})
 
 
 @coaction.route("/api/login", methods=["POST"])
