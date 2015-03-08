@@ -1,9 +1,11 @@
+import datetime
 from flask import Blueprint, flash, jsonify, request
-from .models import Task, TaskSchema, User, Comment, UserSchema
+from .models import Task, TaskSchema, User, Comment, UserSchema, CommentSchema
 from .forms import RegistrationForm, LoginForm
 from .extensions import db, login_manager, bcrypt
 from marshmallow import Schema, fields, ValidationError
 from flask.ext.login import login_required, login_user, logout_user, current_user
+from sqlalchemy import or_
 coaction = Blueprint("coaction", __name__, static_folder="./static")
 task_schema = TaskSchema()
 
@@ -20,10 +22,16 @@ def api():
 
 @coaction.route("/api/tasks", methods=["GET"])
 def view_tasks():
-    tasks = Task.query.all()
     serializer = TaskSchema(many=True)
-    result = serializer.dump(tasks)
-    return jsonify({"tasks": result.data})
+    if not current_user.is_authenticated():
+        tasks = Task.query.all()
+        result = serializer.dump(tasks)
+        return jsonify({"tasks": result.data})
+    else:
+        user = User.query.get_or_404(current_user.id)
+        tasks = Task.query.filter(or_(Task.owner == user.id, Task.assignee == user.id))
+        result = serializer.dump(tasks)
+        return jsonify({"tasks": result.data})
 
 
 @coaction.route("/api/tasks", methods=["POST"])
@@ -31,8 +39,10 @@ def add_task():
     if not request.get_json():
         return jsonify({'message': 'No input data provided'}), 400
     task_data = request.get_json()
-    input_data = dict(**task_data)
-    errors = task_schema.validate(input_data)
+    if "due_date" in task_data:
+        task_data["due_date"] = datetime.datetime.strptime(task_data["due_date"], "%m/%d/%y")
+
+    errors = task_schema.validate(task_data)
     if errors:
         return jsonify(errors), 400
     task = Task(**task_data)
@@ -91,6 +101,10 @@ def get_comments(id):
 def add_comments(id):
     if not request.get_json():
         return jsonify({"message": 'No input data provided'}), 400
+    comment_data = request.get_json()
+    comment_serializer = CommentSchema()
+    result = comment_serializer.dump(comment_data)
+
 
     pass
 
