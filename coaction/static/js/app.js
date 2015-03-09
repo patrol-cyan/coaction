@@ -61,7 +61,7 @@ app.config(['$routeProvider', function($routeProvider) {
 
   self.goToTasks = function () {
     console.log('goToTasks')
-    // $location.path('/tasks');
+    $location.path('/tasks');
   };
 
 }]);
@@ -299,11 +299,11 @@ app.factory('usersService', ['$http', '$log', '$location', function($http, $log,
     return processAjaxPromise($http.get(url));
   }
 
-  function post(url, task) {
+  function post(url, user) {
     return processAjaxPromise($http.post(url, user));
   }
 
-  function put(url, task) {
+  function put(url, user) {
     return processAjaxPromise($http.put(url, user));
   }
 

@@ -33,7 +33,7 @@ app.config(['$routeProvider', function($routeProvider) {
 
   self.goToTasks = function () {
     console.log('goToTasks')
-    // $location.path('/tasks');
+    $location.path('/tasks');
   };
 
 }]);
