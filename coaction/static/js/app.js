@@ -28,76 +28,42 @@ app.controller('MainNavCtrl',
 
 app.config(['$routeProvider', function($routeProvider) {
   var routeDefinition = {
-    templateUrl: '/static/tasks/new-task.html',
-    controller: 'NewTaskCtrl',
-    controllerAs: 'vm',
+    templateUrl: 'static/register/register.html',
+    controller: 'RegisterCtrl',
+    controllerAs: 'vm'
+    // resolve: {
+    //   users: ['usersService', function (usersService) {
+    //     return usersService.list();
+    //   }]
+    // }
   };
 
-  $routeProvider.when('/tasks/new', routeDefinition)
+  $routeProvider.when('/register', routeDefinition);
 }])
-.controller('NewTaskCtrl', ['tasksService', 'Task', '$location', function (tasksService, Task, $location) {
+.controller('RegisterCtrl', ['$location', 'usersService', 'User', function ($location, usersService, User) {
   var self = this;
 
-  self.title = 'New Task';//in order to change html elements for edit view
+  self.message = null;
 
-  self.saveText = 'Create Task';
+  self.newUser = User();
+  console.log(self.newUser);
 
-  self.task = Task();
-
-  self.saveTask = function () {
-    tasksService.addTask(self.task).then(self.goToTasks);
+  self.addUser = function () {
+    usersService.addUser(self.newUser).then(function (data) {
+      console.log(data)
+      if (typeof data.message === 'undefined') {
+        self.goToTasks();
+      } else {
+        self.message = data.message;
+      }
+    });
   };
 
   self.goToTasks = function () {
-    $location.path('/tasks');
+    console.log('goToTasks')
+    // $location.path('/tasks');
   };
 
-  self.cancelTaskEdit = function () {
-    self.goToTasks();
-  };
-
-}]);
-
-
-app.config(['$routeProvider', function($routeProvider) {
-  var routeDefinition = {
-    templateUrl: 'static/users/user.html',
-    controller: 'UsersCtrl',
-    controllerAs: 'vm',
-    resolve: {
-      users: ['usersService', function (usersService) {
-        return usersService.list();
-      }]
-    }
-  };
-
-  $routeProvider.when('/users', routeDefinition);
-}])
-.controller('UsersCtrl', ['users', 'usersService', 'User', function (users, usersService, User) {
-  var self = this;
-
-  self.users = users;
-
-  self.newUser = User();
-
-  self.addUser = function () {
-    // Make a copy of the 'newUser' object
-    var user = User(self.newUser);
-
-    // Add the user to our service
-    usersService.addUser(user).then(function () {
-      // If the add succeeded, remove the user from the users array
-      self.users = self.users.filter(function (existingUser) {
-        return existingUser.userId !== user.userId;
-      });
-
-      // Add the user to the users array
-      self.users.push(user);
-    });
-
-    // Clear our newUser property
-    self.newUser = User();
-  };
 }]);
 
 app.config(['$routeProvider', function($routeProvider) {
@@ -213,10 +179,16 @@ app.config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/', routeDefinition)
     .when('/tasks', routeDefinition);
 }])
-.controller('TasksCtrl', ['tasks', function (tasks) {
+.controller('TasksCtrl', ['$location', 'tasks', 'usersService', function ($location, tasks, usersService) {
   var self = this;
 
   self.tasks = tasks;
+
+  usersService.getCurrentUser().then(function (user) {
+    if (typeof user.email === 'undefined') {
+      $location.path('/register');
+    }
+  })
 }]);
 
 app.factory('User', function () {
@@ -380,18 +352,18 @@ app.factory('currentUser', ['$http', function($http) {
   return current;
 }]);
 
-app.factory('usersService', ['$http', '$q', '$log', 'ajaxHelper', function($http, $q, $log, ajaxHelper) {
+app.factory('usersService', ['$http', '$log', '$location', function($http, $log, $location) {
 
   function get(url) {
     return processAjaxPromise($http.get(url));
   }
 
   function post(url, task) {
-    return processAjaxPromise($http.post(url, task));
+    return processAjaxPromise($http.post(url, user));
   }
 
   function put(url, task) {
-    return processAjaxPromise($http.put(url, task));
+    return processAjaxPromise($http.put(url, user));
   }
 
   function remove(url) {
@@ -411,6 +383,7 @@ app.factory('usersService', ['$http', '$q', '$log', 'ajaxHelper', function($http
     });
   }
 
+
   return {
     // list: function () {
     //   return ajaxHelper.call($http.get('/api/users'));
@@ -425,19 +398,19 @@ app.factory('usersService', ['$http', '$q', '$log', 'ajaxHelper', function($http
     // },
 
     addUser: function (user) {
-      return post($http.post('/api/users', user));
+      return post('/api/register', user);
     },
 
     getCurrentUser: function() {
-      return get($http.get('/api/users/current'));
+      return get('/api/users/current');
     },
 
     logIn: function (user) {
-      return post($http.post('/api/login', user));
+      return post('/api/login', user);
     },
 
-    logIn: function (user) {
-      return post($http.post('/api/logout', user));
+    logOut: function (user) {
+      return post('/api/logout', user);
     }
 
   };

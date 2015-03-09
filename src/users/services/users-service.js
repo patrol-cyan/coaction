@@ -1,15 +1,15 @@
-app.factory('usersService', ['$http', '$q', '$log', 'ajaxHelper', function($http, $q, $log, ajaxHelper) {
+app.factory('usersService', ['$http', '$log', '$location', function($http, $log, $location) {
 
   function get(url) {
     return processAjaxPromise($http.get(url));
   }
 
   function post(url, task) {
-    return processAjaxPromise($http.post(url, task));
+    return processAjaxPromise($http.post(url, user));
   }
 
   function put(url, task) {
-    return processAjaxPromise($http.put(url, task));
+    return processAjaxPromise($http.put(url, user));
   }
 
   function remove(url) {
@@ -29,6 +29,7 @@ app.factory('usersService', ['$http', '$q', '$log', 'ajaxHelper', function($http
     });
   }
 
+
   return {
     // list: function () {
     //   return ajaxHelper.call($http.get('/api/users'));
@@ -43,19 +44,19 @@ app.factory('usersService', ['$http', '$q', '$log', 'ajaxHelper', function($http
     // },
 
     addUser: function (user) {
-      return post($http.post('/api/users', user));
+      return post('/api/register', user);
     },
 
     getCurrentUser: function() {
-      return get($http.get('/api/users/current'));
+      return get('/api/users/current');
     },
 
     logIn: function (user) {
-      return post($http.post('/api/login', user));
+      return post('/api/login', user);
     },
 
-    logIn: function (user) {
-      return post($http.post('/api/logout', user));
+    logOut: function (user) {
+      return post('/api/logout', user);
     }
 
   };

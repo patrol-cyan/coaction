@@ -13,8 +13,14 @@ app.config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/', routeDefinition)
     .when('/tasks', routeDefinition);
 }])
-.controller('TasksCtrl', ['tasks', function (tasks) {
+.controller('TasksCtrl', ['$location', 'tasks', 'usersService', function ($location, tasks, usersService) {
   var self = this;
 
   self.tasks = tasks;
+
+  usersService.getCurrentUser().then(function (user) {
+    if (typeof user.email === 'undefined') {
+      $location.path('/register');
+    }
+  })
 }]);

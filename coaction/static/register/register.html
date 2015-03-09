@@ -1,19 +1,20 @@
 <div class="register">
   <h1></h1>
   <h2></h2>
-  <form class="register" ng-submit="vm.saveTask()">
+  <form class="register" ng-submit="vm.addUser()">
     <label>
-      <input class="" type="text" ng-model="vm.task.name" placeholder="name">
+      <input class="" type="text" ng-model="vm.newUser.name" placeholder="name">
     </label>
     <label>
-      <input class="" type="text" ng-model="vm.task.email" placeholder="email">
+      <input class="" type="text" ng-model="vm.newUser.email" placeholder="email">
     </label>
     <label>
-      <input class="" type="text" ng-model="vm.task.password" placeholder="password">
+      <input class="" type="text" ng-model="vm.newUser.password" placeholder="password">
     </label>
     <label>
-      <input class="" type="text" ng-model="vm.task.password_verification" placeholder="repeat password">
+      <input class="" type="text" ng-model="vm.newUser.password_verification" placeholder="repeat password">
     </label>
-    <button class="" ng-click="vm.goToTasks()">Create your account</button>
+    <button class="">Create your account</button>
+    <div ng-if="vm.message">{{vm.message}}</div>
   </form>
 </div>
