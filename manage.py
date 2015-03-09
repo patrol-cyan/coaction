@@ -34,9 +34,9 @@ def createdb():
 
 @manager.command
 def fake_tasks():
-    task1 = Task(title="Write Docs")
-    task2 = Task(title="Debug API")
-    task3 = Task(title="Buy groceries")
+    task1 = Task(title="Write Docs", owner=1)
+    task2 = Task(title="Debug API", owner=1)
+    task3 = Task(title="Buy groceries", owner=1)
 
     db.session.add(task1)
     db.session.add(task2)
