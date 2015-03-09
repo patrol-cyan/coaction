@@ -18,7 +18,9 @@ app.config(['$routeProvider', function($routeProvider) {
 
   self.tasks = tasks;
 
-  usersService.getCurrentUser().then(function (user) {
+  self.user = usersService.getCurrentUser();
+
+  self.user.then(function (user) {
     if (typeof user.email === 'undefined') {
       $location.path('/register');
     }

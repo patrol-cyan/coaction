@@ -184,66 +184,14 @@ app.config(['$routeProvider', function($routeProvider) {
 
   self.tasks = tasks;
 
-  usersService.getCurrentUser().then(function (user) {
+  self.user = usersService.getCurrentUser();
+
+  self.user.then(function (user) {
     if (typeof user.email === 'undefined') {
       $location.path('/register');
     }
   })
 }]);
-
-app.factory('User', function () {
-  return function (spec) {
-    spec = spec || {};
-    return {
-      name: spec.name,
-      email: spec.email,
-      password: spec.password,
-      password_verification: spec.password_verification
-    };
-  };
-});
-
-app.config(['$routeProvider', function($routeProvider) {
-  var routeDefinition = {
-    templateUrl: 'static/users/user.html',
-    controller: 'UsersCtrl',
-    controllerAs: 'vm',
-    resolve: {
-      users: ['usersService', function (usersService) {
-        return usersService.list();
-      }]
-    }
-  };
-
-  $routeProvider.when('/users', routeDefinition);
-}])
-.controller('UsersCtrl', ['users', 'usersService', 'User', function (users, usersService, User) {
-  var self = this;
-
-  self.users = users;
-
-  self.newUser = User();
-
-  self.addUser = function () {
-    // Make a copy of the 'newUser' object
-    var user = User(self.newUser);
-
-    // Add the user to our service
-    usersService.addUser(user).then(function () {
-      // If the add succeeded, remove the user from the users array
-      self.users = self.users.filter(function (existingUser) {
-        return existingUser.userId !== user.userId;
-      });
-
-      // Add the user to the users array
-      self.users.push(user);
-    });
-
-    // Clear our newUser property
-    self.newUser = User();
-  };
-}]);
-
 
 // app.config(['$routeProvider', function($routeProvider) {
 //   var routeDefinition = {
@@ -269,6 +217,18 @@ app.config(['$routeProvider', function($routeProvider) {
 //   this.github = github.data;
 //   console.log(this.github);
 // }]);
+
+app.factory('User', function () {
+  return function (spec) {
+    spec = spec || {};
+    return {
+      name: spec.name,
+      email: spec.email,
+      password: spec.password,
+      password_verification: spec.password_verification
+    };
+  };
+});
 
 app.controller('Error404Ctrl', ['$location', function ($location) {
   this.message = 'Could not find: ' + $location.url();
@@ -331,25 +291,6 @@ app.factory('tasksService', ['$http', '$log', '$location', function($http, $log,
   };
 
   return self;
-}]);
-
-app.factory('currentUser', ['$http', function($http) {
-
-  var current = {
-    user: undefined,
-    github: undefined
-  };
-
-  $http.get('/api/users/me').then(function(result) {
-    current.user = result.data;
-    $http.get('https://api.github.com/users/' + current.user.userId ).then(function(result) {
-      current.github = result.data;
-    });
-  }).catch(function(err) {
-    current.user = undefined;
-  });
-
-  return current;
 }]);
 
 app.factory('usersService', ['$http', '$log', '$location', function($http, $log, $location) {
