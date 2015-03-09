@@ -168,6 +168,8 @@ It'll also assign them to user 1, which we'll also add. User 1's password is pas
 | POST        | ```/api/register```                          | Register User   |
 | POST        | ```/api/login```                             | Login User      |
 | POST        | ```/api/logout```                            | Logout User     |
+| GET         | ```/api/users```                             | List of users   |
+| GET         | ```/api/users/current```                     | Current user    |
 
 
 
