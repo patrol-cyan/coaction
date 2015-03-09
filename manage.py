@@ -6,7 +6,7 @@ from flask.ext.migrate import MigrateCommand
 from flask.ext.script.commands import ShowUrls, Clean
 
 from coaction import create_app, db
-from coaction.models import Task
+from coaction.models import Task, User
 
 
 app = create_app()
@@ -37,10 +37,12 @@ def fake_tasks():
     task1 = Task(title="Write Docs", owner=1)
     task2 = Task(title="Debug API", owner=1)
     task3 = Task(title="Buy groceries", owner=1)
+    user = User(name="Clinton", email="email@email.com", password="pass")
 
     db.session.add(task1)
     db.session.add(task2)
     db.session.add(task3)
+    db.session.add(user)
     db.session.commit()
 
 if __name__ == '__main__':
