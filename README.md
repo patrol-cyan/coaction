@@ -129,6 +129,13 @@ pip3 install -r requirements.txt
 ```
 will tell the Python package manager to install the libraries needed to run the project. We'll try to tell you before we use any new stuff so you'll know that you need to run pip3 install
 
+### Creating the database.
+If you restart your computer, it turns out that you'll lose your database. That's fine. You can make the database again by running:
+
+```
+python3 manage.py createdb
+```
+
 ### Migrating the database.
 
 If we've changed the database, you'll need to run some upgrades. Usually, this should be as simple as:
