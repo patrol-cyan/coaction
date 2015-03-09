@@ -2,8 +2,10 @@ app.factory('User', function () {
   return function (spec) {
     spec = spec || {};
     return {
-      userId: spec.userId || '',
-      role: spec.role || 'user'
+      name: spec.name,
+      email: spec.email,
+      password: spec.password,
+      password_verification: spec.password_verification
     };
   };
 });

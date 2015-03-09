@@ -26,6 +26,79 @@ app.controller('MainNavCtrl',
   }]);
   
 
+app.config(['$routeProvider', function($routeProvider) {
+  var routeDefinition = {
+    templateUrl: '/static/tasks/new-task.html',
+    controller: 'NewTaskCtrl',
+    controllerAs: 'vm',
+  };
+
+  $routeProvider.when('/tasks/new', routeDefinition)
+}])
+.controller('NewTaskCtrl', ['tasksService', 'Task', '$location', function (tasksService, Task, $location) {
+  var self = this;
+
+  self.title = 'New Task';//in order to change html elements for edit view
+
+  self.saveText = 'Create Task';
+
+  self.task = Task();
+
+  self.saveTask = function () {
+    tasksService.addTask(self.task).then(self.goToTasks);
+  };
+
+  self.goToTasks = function () {
+    $location.path('/tasks');
+  };
+
+  self.cancelTaskEdit = function () {
+    self.goToTasks();
+  };
+
+}]);
+
+
+app.config(['$routeProvider', function($routeProvider) {
+  var routeDefinition = {
+    templateUrl: 'static/users/user.html',
+    controller: 'UsersCtrl',
+    controllerAs: 'vm',
+    resolve: {
+      users: ['usersService', function (usersService) {
+        return usersService.list();
+      }]
+    }
+  };
+
+  $routeProvider.when('/users', routeDefinition);
+}])
+.controller('UsersCtrl', ['users', 'usersService', 'User', function (users, usersService, User) {
+  var self = this;
+
+  self.users = users;
+
+  self.newUser = User();
+
+  self.addUser = function () {
+    // Make a copy of the 'newUser' object
+    var user = User(self.newUser);
+
+    // Add the user to our service
+    usersService.addUser(user).then(function () {
+      // If the add succeeded, remove the user from the users array
+      self.users = self.users.filter(function (existingUser) {
+        return existingUser.userId !== user.userId;
+      });
+
+      // Add the user to the users array
+      self.users.push(user);
+    });
+
+    // Clear our newUser property
+    self.newUser = User();
+  };
+}]);
 
 app.config(['$routeProvider', function($routeProvider) {
   var routeDefinition = {
@@ -150,8 +223,10 @@ app.factory('User', function () {
   return function (spec) {
     spec = spec || {};
     return {
-      userId: spec.userId || '',
-      role: spec.role || 'user'
+      name: spec.name,
+      email: spec.email,
+      password: spec.password,
+      password_verification: spec.password_verification
     };
   };
 });
@@ -307,25 +382,62 @@ app.factory('currentUser', ['$http', function($http) {
 
 app.factory('usersService', ['$http', '$q', '$log', 'ajaxHelper', function($http, $q, $log, ajaxHelper) {
 
-  return {
-    list: function () {
-      return ajaxHelper.call($http.get('/api/users'));
-    },
+  function get(url) {
+    return processAjaxPromise($http.get(url));
+  }
 
-    getByUserId: function (userId) {
-      if (!userId) {
-        throw new Error('getByUserId requires a user id');
+  function post(url, task) {
+    return processAjaxPromise($http.post(url, task));
+  }
+
+  function put(url, task) {
+    return processAjaxPromise($http.put(url, task));
+  }
+
+  function remove(url) {
+    return processAjaxPromise($http.delete(url));
+  }
+
+  function processAjaxPromise(p) {
+    return p.then(function (result) {
+      return result.data;
+    })
+    .catch(function (error) {
+      if (error.status === 401) {
+        // We're not logged in..!!!
+        $location.path('/login');
       }
+      $log.log(error);
+    });
+  }
 
-      return ajaxHelper.call($http.get('/api/users/' + userId));
-    },
+  return {
+    // list: function () {
+    //   return ajaxHelper.call($http.get('/api/users'));
+    // },
+
+    // getByUserId: function (userId) {
+    //   if (!userId) {
+    //     throw new Error('getByUserId requires a user id');
+    //   }
+    //
+    //   return ajaxHelper.call($http.get('/api/users/' + userId));
+    // },
 
     addUser: function (user) {
-      return ajaxHelper.call($http.post('/api/users', user));
+      return post($http.post('/api/users', user));
     },
 
     getCurrentUser: function() {
-      return ajaxHelper.call($http.get('/api/users/me'));
+      return get($http.get('/api/users/current'));
+    },
+
+    logIn: function (user) {
+      return post($http.post('/api/login', user));
+    },
+
+    logIn: function (user) {
+      return post($http.post('/api/logout', user));
     }
 
   };
