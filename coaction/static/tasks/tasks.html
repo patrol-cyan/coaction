@@ -1,0 +1,27 @@
+<div class="tasks">
+
+<h1 class="greeting-user-header">hello, Ethel!</h1>
+<!-- <h1 class="greeting-user-header">hello, {{vm.user.name}}!</h1> -->
+  <h3>here are your tasks</h3>
+  <a href="#/tasks/new">Add a task</a>
+  <ul>
+    <li ng-repeat="task in vm.tasks">
+      <label>Mark as done
+        <input type="checkbox">
+      </label>
+      <h2>{{task.title}}</h2>
+      <p>
+        {{task.description}}
+      </p>
+      <div>
+        <span>{{task.due_date}}</span>
+        <span>{{task.status}}</span>
+        <span>{{task.started_status}}</span>
+        <span>{{task.assignee}}</span>
+      </div>
+      <a href="#/tasks/{{task.id}}/edit">Edit</a>
+
+    </li>
+  </ul>
+
+</div>

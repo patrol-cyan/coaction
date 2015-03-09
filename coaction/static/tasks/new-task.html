@@ -1,0 +1,28 @@
+<h1>{{vm.title}}</h1>
+
+<form class="task-form" ng-submit="vm.saveTask()">
+ <div class="new-task-container">
+    <button ng-show="vm.task.id" ng-click="vm.deleteTask()">Delete this task</button>
+    <input class="new-task-title" type="text" ng-model="vm.task.title" placeholder="title of task">
+    <div class="textarea-container">
+      <textarea class="new-task-desc" maxlength="200" ng-model="vm.task.description" placeholder="describe your new task to help you set any details"></textarea>
+      <div class="new-task-text-count">{{200 - vm.task.description.length}} characters remaining</div>
+    </div>
+    <label>Assigned to
+      <input class="assignee" type="text" ng-model="vm.task.assignee" placeholder="username">
+    </label>
+    <label>Status
+     <select ng-model="vm.task.status">
+       <option value="" disabled selected>Select</option>
+       <option >TODO</option>
+       <option>DOING</option>
+       <option>DONE</option>
+     </select>
+    </label>
+    <label>Due Date
+      <input ng-model="vm.task.due_date" placeholder="mm/dd/yyyy">
+    </label>
+  </div>
+  <button>{{vm.saveText}}</button>
+  <button ng-click="vm.goToTasks()">Cancel</button>
+</form>
